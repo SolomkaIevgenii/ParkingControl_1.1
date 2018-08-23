@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 public class ParkingListActivity extends AppCompatActivity {
 
+    //Временная заглушка со статичным списком
+
     public static final String EXTRA_KEY_LOGIN = "Логин";
     public static final String EXTRA_KEY_PASSWORD = "Пароль";
 
@@ -100,5 +102,21 @@ public class ParkingListActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+    private long mBackPressed;
+
+    @Override
+    public void onBackPressed()
+    {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
+        {
+            super.onBackPressed();
+            return;
+        }
+        else { Toast.makeText(getBaseContext(), "Tap back button in order to exit", Toast.LENGTH_SHORT).show(); }
+
+        mBackPressed = System.currentTimeMillis();
     }
 }

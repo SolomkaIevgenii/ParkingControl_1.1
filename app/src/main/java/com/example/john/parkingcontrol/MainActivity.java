@@ -27,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonCheck).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setEnabled(false);
                 Intent intent = new Intent(v.getContext(), CheckPaymentActivity.class);
                 startActivity(intent);
+                //v.setEnabled(true);
             }
         });
 
@@ -49,5 +51,26 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        findViewById(R.id.buttonCheck).setEnabled(true);
+    }
+    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+    private long mBackPressed;
+
+    @Override
+    public void onBackPressed()
+    {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
+        {
+            super.onBackPressed();
+            return;
+        }
+        else { Toast.makeText(getBaseContext(), "Tap back button in order to exit", Toast.LENGTH_SHORT).show(); }
+
+        mBackPressed = System.currentTimeMillis();
     }
 }

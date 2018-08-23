@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -39,5 +40,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
         buttonEnter.setOnClickListener(clickListener);
+    }
+
+    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+    private long mBackPressed;
+
+    @Override
+    public void onBackPressed()
+    {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
+        {
+            super.onBackPressed();
+            return;
+        }
+        else { Toast.makeText(getBaseContext(), "Tap back button in order to exit", Toast.LENGTH_SHORT).show(); }
+
+        mBackPressed = System.currentTimeMillis();
     }
 }
