@@ -12,7 +12,7 @@ import java.net.URLConnection;
 public class HttpClient {
     private static final String TAG = "HttpClient_";
 
-    protected String request(String urlStr) throws IOException, URISyntaxException {
+    public String request(String urlStr) throws IOException, URISyntaxException {
         URL url = new URL(urlStr);
         String schema = url.toURI().getScheme();
         Log.d(TAG, "request: to url: " + urlStr + ", schema: " + schema);

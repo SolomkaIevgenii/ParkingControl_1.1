@@ -4,6 +4,12 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.john.parkingcontrol.API.HttpClient;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class CheckingResultActivity extends AppCompatActivity {
 
@@ -23,6 +29,12 @@ public class CheckingResultActivity extends AppCompatActivity {
         myAsyncTask.execute("http://parking.2click.money/ExtApi/carState?id="+enteredCarNumber+"&accToken=fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        myAsyncTask.cancel(true);
+    }
+
     public static class MyAsyncTask extends AsyncTask<String, Integer, String>{
 
         private TextView resultView;
@@ -32,8 +44,31 @@ public class CheckingResultActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected String doInBackground(String... urls) {
+            try {
+                return new HttpClient().request(urls[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            resultView.setText("Loading..."+values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if(s==null){
+                Toast.makeText(resultView.getContext(), "Error", Toast.LENGTH_SHORT).show();
+            }else {
+                resultView.setText(s);
+            }
         }
     }
 }
