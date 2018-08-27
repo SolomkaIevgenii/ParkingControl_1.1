@@ -8,20 +8,22 @@ import android.widget.EditText;
 
 public class EnterNumberActivity extends AppCompatActivity {
 
-    EditText carNumber;
-    String finalCarNumber;
+    //EditText carNumber;
+    //String finalCarNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_number);
 
-        carNumber = findViewById(R.id.editTextCarNumber);
-        finalCarNumber = carNumber.getText().toString();
 
         findViewById(R.id.buttonCheck).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                EditText carNumber = findViewById(R.id.editTextCarNumber);
+                String finalCarNumber = carNumber.getText().toString();
+
                 Intent intent = new Intent(v.getContext(), CheckingResultActivity.class);
                 intent.putExtra(CheckingResultActivity.enteredCarNumber, finalCarNumber);
                 startActivity(intent);

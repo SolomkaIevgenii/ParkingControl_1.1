@@ -26,7 +26,9 @@ public class CheckingResultActivity extends AppCompatActivity {
         resultView = findViewById(R.id.textViewResult);
 
         myAsyncTask = new MyAsyncTask(resultView);
-        myAsyncTask.execute("http://parking.2click.money/ExtApi/carState?id="+enteredCarNumber+"&accToken=fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik");
+        myAsyncTask.execute("http://parking.2click.money/ExtApi/carState?id="+getIntent().getStringExtra(enteredCarNumber)+"&accToken=fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik");
+
+        Toast.makeText(this, getIntent().getStringExtra(enteredCarNumber), Toast.LENGTH_SHORT).show();
     }
 
     @Override
