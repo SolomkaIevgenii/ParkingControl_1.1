@@ -5,15 +5,34 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
+import com.example.john.parkingcontrol.API.models.TokenRequest;
+import com.example.john.parkingcontrol.API.models.TokenResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class LoginActivity extends AppCompatActivity {
+
+    private GetTokenApi service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://11111111.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        service = retrofit.create(GetTokenApi.class);
 
         /*Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -27,6 +46,32 @@ public class LoginActivity extends AppCompatActivity {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                TokenRequest tokenRequest = new TokenRequest();
+
+                TextView loginEntered = findViewById(R.id.editTextLogin);
+                TextView passwordEntered = findViewById(R.id.editTextPassword);
+
+                tokenRequest.setLogin(loginEntered.getText().toString());
+                tokenRequest.setLogin(passwordEntered.getText().toString());
+
+                Call<TokenResponse> tokenRequestCall = service.getTokenAccess(tokenRequest);
+
+                tokenRequestCall.enqueue(new Callback<TokenResponse>() {
+                    @Override
+                    public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+
+                        int statusCide = response.code();
+
+                        TokenResponse tokenResponse = response.body();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<TokenResponse> call, Throwable t) {
+
+                    }
+                });
 
                 /*!!!ПОКА НИКУДА НЕ ПЕРЕДАЮ!!!*/
                 String login = userLogin.getText().toString();
