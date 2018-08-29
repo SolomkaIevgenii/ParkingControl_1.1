@@ -64,7 +64,6 @@ public class LoginActivity extends AppCompatActivity {
                         int statusCide = response.code();
 
                         TokenResponse tokenResponse = response.body();
-
                     }
 
                     @Override
