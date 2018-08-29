@@ -64,6 +64,10 @@ public class LoginActivity extends AppCompatActivity {
                         int statusCide = response.code();
 
                         TokenResponse tokenResponse = response.body();
+
+                        String myToken = new TokenResponse().getToken();
+
+                        Toast.makeText(LoginActivity.this, myToken, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -71,8 +75,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 });
-
-                /*!!!ПОКА НИКУДА НЕ ПЕРЕДАЮ!!!*/
+                /*
+                //!!!ПОКА НИКУДА НЕ ПЕРЕДАЮ!!!
                 String login = userLogin.getText().toString();
                 String password = userPassword.getText().toString();
 
@@ -81,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra(ParkingListActivity.EXTRA_KEY_PASSWORD, password);
                 startActivity(intent);
                 finish();
+                */
             }
         };
         buttonEnter.setOnClickListener(clickListener);
