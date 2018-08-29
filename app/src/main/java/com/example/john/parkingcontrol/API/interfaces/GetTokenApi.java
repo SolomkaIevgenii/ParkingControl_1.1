@@ -9,6 +9,6 @@ import retrofit2.http.POST;
 
 public interface GetTokenApi {
 
-    @POST("2222222")
+    @POST("api/token")
     Call<TokenResponse> getTokenAccess(@Body TokenRequest tokenRequest);
 }

@@ -27,8 +27,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://11111111.com")
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://192.168.1.106:44396/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                 tokenRequest.setLogin(loginEntered.getText().toString());
                 tokenRequest.setLogin(passwordEntered.getText().toString());
 
-                Call<TokenResponse> tokenRequestCall = service.getTokenAccess(tokenRequest);
+                final Call<TokenResponse> tokenRequestCall = service.getTokenAccess(tokenRequest);
 
                 tokenRequestCall.enqueue(new Callback<TokenResponse>() {
                     @Override
@@ -72,6 +72,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<TokenResponse> call, Throwable t) {
+
+                        Toast.makeText(LoginActivity.this, t.getMessage()+" + "+tokenRequestCall.toString(), Toast.LENGTH_SHORT).show();
 
                     }
                 });

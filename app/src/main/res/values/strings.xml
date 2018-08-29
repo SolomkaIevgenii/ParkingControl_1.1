@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ParkingControl</string>
+    <string name="app_text_login">Логін</string>
+    <string name="app_text_password">Пароль</string>
+    <string name="app_text_save_password">Зберегти пароль</string>
+    <string name="app_text_miss_password">Невірний логін або пароль</string>
+    <string name="app_text_enter">Увійти</string>
 </resources>
