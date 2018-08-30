@@ -5,15 +5,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class TokenResponse {
 
-    @SerializedName("token")
+    @SerializedName("access_token")
     @Expose
-    private String token;
-    @SerializedName("name")
+    private String access_token;
+    @SerializedName("login")
     @Expose
     private String login;
 
-    public String getToken() {
-        return token;
+    public String getAccess_token() {
+        return access_token;
     }
 
     public String getLogin() {

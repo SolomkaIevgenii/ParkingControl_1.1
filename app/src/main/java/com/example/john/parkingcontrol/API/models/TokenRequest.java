@@ -1,6 +1,7 @@
 package com.example.john.parkingcontrol.API.models;
 
 public class TokenRequest {
+
     private String login;
     private String password;
 

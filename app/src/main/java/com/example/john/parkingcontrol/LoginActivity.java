@@ -1,5 +1,7 @@
 package com.example.john.parkingcontrol;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,17 +30,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://192.168.1.106:44396/")
+                .baseUrl("http://192.168.1.68:32771/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         service = retrofit.create(GetTokenApi.class);
 
-        /*Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();*/
 
-        /*Объявляем кнопку входа, логин и пароль*/
         View buttonEnter = findViewById(R.id.buttonEnter);
         final EditText userLogin = findViewById(R.id.editTextLogin);
         final EditText userPassword = findViewById(R.id.editTextPassword);
@@ -47,47 +45,73 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                TokenRequest tokenRequest = new TokenRequest();
+
+
+                final TokenRequest tokenRequest = new TokenRequest();
 
                 TextView loginEntered = findViewById(R.id.editTextLogin);
                 TextView passwordEntered = findViewById(R.id.editTextPassword);
-
+                /**
+                 * Импорт данных в клас, для отправки запроса в Json
                 tokenRequest.setLogin(loginEntered.getText().toString());
-                tokenRequest.setLogin(passwordEntered.getText().toString());
+                tokenRequest.setPassword(passwordEntered.getText().toString());
+                */
 
-                final Call<TokenResponse> tokenRequestCall = service.getTokenAccess(tokenRequest);
+                String superLogin = loginEntered.getText().toString();
+                String superPassword = passwordEntered.getText().toString();
+
+                 /**
+                 * Ниже вызов класадля формирования запроса
+                 */
+
+                final Call<TokenResponse> tokenRequestCall = service.getTokenAccessPost(superLogin, superPassword);
 
                 tokenRequestCall.enqueue(new Callback<TokenResponse>() {
                     @Override
                     public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
 
-                        int statusCide = response.code();
+                        int statusCode = response.code();
+                        switch (statusCode){
+                            case 200:
 
-                        TokenResponse tokenResponse = response.body();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                                builder.setTitle("Номер авто: ");
+                                builder.setMessage(" Code= "+response.code());
+                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                        String myToken = new TokenResponse().getToken();
 
-                        Toast.makeText(LoginActivity.this, myToken, Toast.LENGTH_SHORT).show();
+
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                });
+
+                                builder.setCancelable(false);
+                                AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+
+                            case 400:
+
+                                Toast.makeText(LoginActivity.this, "Login or/and password is incorrect", Toast.LENGTH_LONG).show();
+                                break;
+
+                            default:
+
+                                Toast.makeText(LoginActivity.this, "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                break;
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<TokenResponse> call, Throwable t) {
 
-                        Toast.makeText(LoginActivity.this, t.getMessage()+" + "+tokenRequestCall.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Ошибка соединения", Toast.LENGTH_SHORT).show();
 
                     }
                 });
-                /*
-                //!!!ПОКА НИКУДА НЕ ПЕРЕДАЮ!!!
-                String login = userLogin.getText().toString();
-                String password = userPassword.getText().toString();
-
-                Intent intent = new Intent(v.getContext(), ParkingListActivity.class);
-                intent.putExtra(ParkingListActivity.EXTRA_KEY_LOGIN, login);
-                intent.putExtra(ParkingListActivity.EXTRA_KEY_PASSWORD, password);
-                startActivity(intent);
-                finish();
-                */
             }
         };
         buttonEnter.setOnClickListener(clickListener);
@@ -108,4 +132,20 @@ public class LoginActivity extends AppCompatActivity {
 
         mBackPressed = System.currentTimeMillis();
     }
+
+    public void checkPayment(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Номер авто: ");
+        builder.setMessage("555");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setCancelable(false);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
 }
