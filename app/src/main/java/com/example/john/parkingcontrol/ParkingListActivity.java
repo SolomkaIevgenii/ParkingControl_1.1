@@ -27,7 +27,7 @@ public class ParkingListActivity extends AppCompatActivity {
                 String addressGet = address.getText().toString();
 
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, addressGet);
+                //intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, addressGet);
                 startActivity(intent);
                 finish();
             }
@@ -41,7 +41,7 @@ public class ParkingListActivity extends AppCompatActivity {
                 String addressGet1 = address1.getText().toString();
 
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, addressGet1);
+                //intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, addressGet1);
                 startActivity(intent);
                 finish();
             }
@@ -55,7 +55,7 @@ public class ParkingListActivity extends AppCompatActivity {
                 String adressGet1 = adress1.getText().toString();
 
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, adressGet1);
+                //intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, adressGet1);
                 startActivity(intent);
                 finish();
             }
@@ -69,7 +69,7 @@ public class ParkingListActivity extends AppCompatActivity {
                 String adressGet1 = adress1.getText().toString();
 
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, adressGet1);
+                //intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, adressGet1);
                 startActivity(intent);
                 finish();
             }
@@ -83,7 +83,7 @@ public class ParkingListActivity extends AppCompatActivity {
                 String adressGet1 = adress1.getText().toString();
 
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, adressGet1);
+                //intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, adressGet1);
                 startActivity(intent);
                 finish();
             }
@@ -97,7 +97,7 @@ public class ParkingListActivity extends AppCompatActivity {
                 String adressGet1 = adress1.getText().toString();
 
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, adressGet1);
+                //intent.putExtra(MainActivity.EXTRA_KEY_ADDRESS, adressGet1);
                 startActivity(intent);
                 finish();
             }

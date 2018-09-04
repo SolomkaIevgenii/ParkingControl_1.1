@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_an_error">Помилка</string>
+    <string name="app_an_internet_error">Помилка з`днання, перевірте підключення до інтернету.</string>
+</resources>

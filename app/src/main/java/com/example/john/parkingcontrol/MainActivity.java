@@ -1,6 +1,8 @@
 package com.example.john.parkingcontrol;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,20 +11,23 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static String EXTRA_KEY_ADDRESS;
+
+    @NonNull
+    String myToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toast.makeText(this, getIntent().getStringExtra(EXTRA_KEY_ADDRESS), Toast.LENGTH_SHORT).show();
+        Button buttonTicketIssue =  findViewById(R.id.buttonTicketIssue);
+        Button buttonHistory =  findViewById(R.id.buttonHistory);
 
-        Button buttonT =  findViewById(R.id.buttonTicketIssue);
-        buttonT.setEnabled(false);
-
-        Button buttonH =  findViewById(R.id.buttonHistory);
-        buttonH.setEnabled(false);
+        
+        SharedPreferences sPref;
+        sPref = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.app_field_token), "");
+        Toast.makeText(MainActivity.this, "Text loaded = "+myToken, Toast.LENGTH_SHORT).show();
 
         findViewById(R.id.buttonCheck).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,34 +35,34 @@ public class MainActivity extends AppCompatActivity {
                 v.setEnabled(false);
                 Intent intent = new Intent(v.getContext(), CheckPaymentActivity.class);
                 startActivity(intent);
-                //v.setEnabled(true);
+                v.setEnabled(true);
             }
         });
 
-        findViewById(R.id.buttonTicketIssue).setOnClickListener(new View.OnClickListener() {
+        buttonTicketIssue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                v.setEnabled(false);
                 Toast.makeText(MainActivity.this, "Розділ у розробці", Toast.LENGTH_SHORT).show();
-
+                v.setEnabled(true);
             }
         });
 
-        findViewById(R.id.buttonHistory).setOnClickListener(new View.OnClickListener() {
+        buttonHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                v.setEnabled(false);
                 Toast.makeText(MainActivity.this, "Розділ у розробці", Toast.LENGTH_SHORT).show();
-
+                v.setEnabled(true);
             }
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        findViewById(R.id.buttonCheck).setEnabled(true);
-    }
+    //@Override
+    //protected void onResume() {
+    //    super.onResume();
+    //    findViewById(R.id.buttonCheck).setEnabled(true);
+    //}
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private long mBackPressed;
 
