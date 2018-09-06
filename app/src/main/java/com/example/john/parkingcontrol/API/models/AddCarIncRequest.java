@@ -2,118 +2,159 @@ package com.example.john.parkingcontrol.API.models;
 
 public class AddCarIncRequest {
 
-    private String CarNumber;
-    private String CarOwner;
-    private String Id;
-    private String CreateDate;
-    private String FullDescription;
-    private String ShortDescription;
-    private String IncidentType;
-    private String IncidentTypeId;
-    private String AuthorLogin;
-    private String LawEnactment;
-    private String LawEnactmentId;
-    private String PenaltyAmount;
+    private String carNumber;
+    private String carOwner;
+    private String id;
+    private String author;
+    private String authorId;
+    private String createDate;
+    private String series;
+    private String number;
+    private String fullDescription;
+    private String shortDescription;
+    private String incidentType;
+    private String incidentTypeId;
+    private String incidentAddress;
+    private String lawEnactment;
+    private String lawEnactmentId;
+    private String penaltyAmount;
     private String PenaltyPaymentDate;
     private String IncidentStatus;
-    private String IncidentStatusId;
-    private String Location;
-    private String LocationId;
+    private String incidentStatusId;
+    private String location;
+    private String locationId;
+    private String forwardedToCustomsService;
+    private String forwardedToExecutiveService;
+    private String documentType;
+    private String documentTypeId;
+
 
     public String getCarNumber() {
-        return CarNumber;
+        return carNumber;
     }
 
     public void setCarNumber(String carNumber) {
-        CarNumber = carNumber;
+        this.carNumber = carNumber;
     }
 
     public String getCarOwner() {
-        return CarOwner;
+        return carOwner;
     }
 
     public void setCarOwner(String carOwner) {
-        CarOwner = carOwner;
+        this.carOwner = carOwner;
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        Id = id;
+        this.id = id;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public String getCreateDate() {
-        return CreateDate;
+        return createDate;
     }
 
     public void setCreateDate(String createDate) {
-        CreateDate = createDate;
+        this.createDate = createDate;
+    }
+
+    public String getSeries() {
+        return series;
+    }
+
+    public void setSeries(String series) {
+        this.series = series;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public String getFullDescription() {
-        return FullDescription;
+        return fullDescription;
     }
 
     public void setFullDescription(String fullDescription) {
-        FullDescription = fullDescription;
+        this.fullDescription = fullDescription;
     }
 
     public String getShortDescription() {
-        return ShortDescription;
+        return shortDescription;
     }
 
     public void setShortDescription(String shortDescription) {
-        ShortDescription = shortDescription;
+        this.shortDescription = shortDescription;
     }
 
     public String getIncidentType() {
-        return IncidentType;
+        return incidentType;
     }
 
     public void setIncidentType(String incidentType) {
-        IncidentType = incidentType;
+        this.incidentType = incidentType;
     }
 
     public String getIncidentTypeId() {
-        return IncidentTypeId;
+        return incidentTypeId;
     }
 
     public void setIncidentTypeId(String incidentTypeId) {
-        IncidentTypeId = incidentTypeId;
+        this.incidentTypeId = incidentTypeId;
     }
 
-    public String getAuthorLogin() {
-        return AuthorLogin;
+    public String getIncidentAddress() {
+        return incidentAddress;
     }
 
-    public void setAuthorLogin(String authorLogin) {
-        AuthorLogin = authorLogin;
+    public void setIncidentAddress(String incidentAddress) {
+        this.incidentAddress = incidentAddress;
     }
 
     public String getLawEnactment() {
-        return LawEnactment;
+        return lawEnactment;
     }
 
     public void setLawEnactment(String lawEnactment) {
-        LawEnactment = lawEnactment;
+        this.lawEnactment = lawEnactment;
     }
 
     public String getLawEnactmentId() {
-        return LawEnactmentId;
+        return lawEnactmentId;
     }
 
     public void setLawEnactmentId(String lawEnactmentId) {
-        LawEnactmentId = lawEnactmentId;
+        this.lawEnactmentId = lawEnactmentId;
     }
 
     public String getPenaltyAmount() {
-        return PenaltyAmount;
+        return penaltyAmount;
     }
 
     public void setPenaltyAmount(String penaltyAmount) {
-        PenaltyAmount = penaltyAmount;
+        this.penaltyAmount = penaltyAmount;
     }
 
     public String getPenaltyPaymentDate() {
@@ -133,26 +174,58 @@ public class AddCarIncRequest {
     }
 
     public String getIncidentStatusId() {
-        return IncidentStatusId;
+        return incidentStatusId;
     }
 
     public void setIncidentStatusId(String incidentStatusId) {
-        IncidentStatusId = incidentStatusId;
+        this.incidentStatusId = incidentStatusId;
     }
 
     public String getLocation() {
-        return Location;
+        return location;
     }
 
     public void setLocation(String location) {
-        Location = location;
+        this.location = location;
     }
 
     public String getLocationId() {
-        return LocationId;
+        return locationId;
     }
 
     public void setLocationId(String locationId) {
-        LocationId = locationId;
+        this.locationId = locationId;
+    }
+
+    public String getForwardedToCustomsService() {
+        return forwardedToCustomsService;
+    }
+
+    public void setForwardedToCustomsService(String forwardedToCustomsService) {
+        this.forwardedToCustomsService = forwardedToCustomsService;
+    }
+
+    public String getForwardedToExecutiveService() {
+        return forwardedToExecutiveService;
+    }
+
+    public void setForwardedToExecutiveService(String forwardedToExecutiveService) {
+        this.forwardedToExecutiveService = forwardedToExecutiveService;
+    }
+
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getDocumentTypeId() {
+        return documentTypeId;
+    }
+
+    public void setDocumentTypeId(String documentTypeId) {
+        this.documentTypeId = documentTypeId;
     }
 }

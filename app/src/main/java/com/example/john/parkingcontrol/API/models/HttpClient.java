@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol.API;
+package com.example.john.parkingcontrol.API.models;
 
 import android.util.Log;
 

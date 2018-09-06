@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.TokenRequest;
 import com.example.john.parkingcontrol.API.models.TokenResponse;
+import com.example.john.parkingcontrol.DifferentHelpers.TemporaryDataStorage;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private GetTokenApi service;
     @NonNull
     private String myToken;
+    private TemporaryDataStorage temporaryDataStorage = new TemporaryDataStorage();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
                  * Ниже вызов класа для формирования запроса
                  */
 
-                final Call<TokenResponse> tokenRequestCall = service.getTokenAccess(myToken, tokenRequest);
+                final Call<TokenResponse> tokenRequestCall = service.getTokenAccess(tokenRequest);
 
                 tokenRequestCall.enqueue(new Callback<TokenResponse>() {
                     @Override
@@ -77,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 try {
                                     myToken = response.body().getAccess_token();
+                                    temporaryDataStorage.setStoredToken(myToken);
 
                                 }catch (NullPointerException e){
                                     Toast.makeText(LoginActivity.this, "Помилка доступу: "+e, Toast.LENGTH_SHORT).show();
@@ -88,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                                 SharedPreferences.Editor ed = sPrefToken.edit();
                                 ed.putString(getResources().getString(R.string.app_field_token), myToken);
                                 ed.commit();
+
 
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);

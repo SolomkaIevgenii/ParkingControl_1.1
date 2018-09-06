@@ -1,7 +1,9 @@
-package com.example.john.parkingcontrol;
+package com.example.john.parkingcontrol.ParkingPaymentCheck;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.john.parkingcontrol.R;
 
 public class ScanQRActivity extends AppCompatActivity {
 

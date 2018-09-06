@@ -4,4 +4,5 @@
     <string name="app_field_token">token</string>
     <string name="app_field_user">name</string>
     <string name="app_field_hash">hash</string>
+    <string name="app_field_carNumber">carNumber</string>
 </resources>

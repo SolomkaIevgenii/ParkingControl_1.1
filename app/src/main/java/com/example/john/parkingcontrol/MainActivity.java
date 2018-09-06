@@ -9,11 +9,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.john.parkingcontrol.ParkingPaymentCheck.CheckPaymentActivity;
+
 public class MainActivity extends AppCompatActivity {
 
 
     @NonNull
-    String myToken;
+    private String myToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +25,10 @@ public class MainActivity extends AppCompatActivity {
         Button buttonTicketIssue =  findViewById(R.id.buttonTicketIssue);
         Button buttonHistory =  findViewById(R.id.buttonHistory);
 
-        
+
         SharedPreferences sPref;
         sPref = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
         myToken = sPref.getString(getResources().getString(R.string.app_field_token), "");
-        Toast.makeText(MainActivity.this, "Text loaded = "+myToken, Toast.LENGTH_SHORT).show();
 
         findViewById(R.id.buttonCheck).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //@Override
-    //protected void onResume() {
-    //    super.onResume();
-    //    findViewById(R.id.buttonCheck).setEnabled(true);
-    //}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        findViewById(R.id.buttonCheck).setEnabled(true);
+    }
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private long mBackPressed;
 

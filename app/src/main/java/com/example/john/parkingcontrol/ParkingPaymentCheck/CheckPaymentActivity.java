@@ -1,9 +1,11 @@
-package com.example.john.parkingcontrol;
+package com.example.john.parkingcontrol.ParkingPaymentCheck;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import com.example.john.parkingcontrol.R;
 
 public class CheckPaymentActivity extends AppCompatActivity {
 
