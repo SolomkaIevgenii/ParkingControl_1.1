@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,7 @@ public class CheckingResultActivity extends AppCompatActivity {
     //private PaymentStatusRequest paymentStatusRequest = new PaymentStatusRequest();
     private String tokenStaticTemporary = "fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik";
 
-    private TextView resultView;
+    private TextView resultView, status, hours, startTime, endTime, parkName, parkAddress;
     //private MyAsyncTask myAsyncTask;
 
 
@@ -44,7 +45,7 @@ public class CheckingResultActivity extends AppCompatActivity {
 
         service = retrofit.create(GetTokenApi.class);
 
-        resultView = findViewById(R.id.textViewResult);
+        resultView = findViewById(R.id.textCarNResult);
         resultView.setText("loading...");
         resultView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
@@ -54,8 +55,6 @@ public class CheckingResultActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 v.setEnabled(false);
-                resultView.setText("loading...");
-                resultView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 sendRequest();
                 v.setEnabled(true);
             }
@@ -91,18 +90,51 @@ public class CheckingResultActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PaymentStatusResponse> call, Response<PaymentStatusResponse> response) {
 
+                resultView = findViewById(R.id.textCarNResult);
+                hours = findViewById(R.id.textHours);
+                parkName = findViewById(R.id.textParkingName);
+                parkAddress = findViewById(R.id.textParkingAddres);
+                startTime = findViewById(R.id.textStartTime);
+                endTime = findViewById(R.id.textEndTime);
+                status = findViewById(R.id.textParkStatus);
+
+
                 switch (response.code()) {
                     case 200:
-                        resultView = findViewById(R.id.textViewResult);
-                        resultView.setText(response.body().getResponseMessage().toString());
 
-                        if (!response.body().getOnparking()) {
+                        if (!response.body().getOnParking()) {
                             findViewById(R.id.buttonRefresh).setVisibility(View.GONE);
                             findViewById(R.id.buttonOK).setVisibility(View.GONE);
                             findViewById(R.id.buttonTicketIssue).setVisibility(View.VISIBLE);
+                            resultView.setText(response.body().getMessage());
+                            hours.setVisibility(View.GONE);
+                            parkName.setVisibility(View.GONE);
+                            parkAddress.setVisibility(View.GONE);
+                            startTime.setVisibility(View.GONE);
+                            endTime.setVisibility(View.GONE);
+                            status.setVisibility(View.GONE);
+                            break;
+                        }else if(response.body().getMessage().toString().equalsIgnoreCase("Пустий номер авто!")){
+
+                            findViewById(R.id.buttonRefresh).setVisibility(View.GONE);
+                            Button buttonOKtoBACK = findViewById(R.id.buttonOK);
+                            buttonOKtoBACK.setText("Назад");
+                            break;
+
+                        }else{
+                            status.setText("Авто на парковці");
+                            resultView.setText("Авто "+response.body().getCarNumber().toString());
+                            hours.setText("Сплачено за: "+response.body().getPrepayHours()+" г.");
+                            parkName.setText(response.body().getParkigName());
+                            parkAddress.setText(response.body().getAddress());
+                            startTime.setText("Заїхав: "+response.body().getParkingStart());
+                            endTime.setText("Оплачено до: "+response.body().getParkingEnd());
                         }
 
-                        Toast.makeText(CheckingResultActivity.this, response.body().getOnparking().toString() + " " + response.body().getResponseMessage().toString(), Toast.LENGTH_SHORT).show();
+
+
+
+                        Toast.makeText(CheckingResultActivity.this, response.body().getOnParking().toString() + " " + response.body().getMessage().toString(), Toast.LENGTH_SHORT).show();
                         break;
 
 
@@ -138,7 +170,7 @@ public class CheckingResultActivity extends AppCompatActivity {
             super.onBackPressed();
             return;
         }
-        else { Toast.makeText(getBaseContext(), "Tap back button in order to exit", Toast.LENGTH_SHORT).show(); }
+        else { Toast.makeText(getBaseContext(), "Натиснить 'назад' повторно щоб повернутися в пропередне меню.", Toast.LENGTH_SHORT).show(); }
 
         mBackPressed = System.currentTimeMillis();
     }

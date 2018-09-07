@@ -5,16 +5,67 @@ import com.google.gson.annotations.SerializedName;
 
 public class PaymentStatusResponse {
 
-    @SerializedName("onparking")
+    @SerializedName("onParking")
     @Expose
-    private Boolean onparking;
+    private Boolean onParking;
 
     @SerializedName("message")
     @Expose
     private String message;
 
-    public Boolean getOnparking() {return onparking;}
+    @SerializedName("carNumber")
+    @Expose
+    private String carNumber;
 
-    public String getResponseMessage() {return message;}
+    @SerializedName("address")
+    @Expose
+    private String address;
 
+    @SerializedName("parkigName")
+    @Expose
+    private String parkigName;
+
+    @SerializedName("parkingStart")
+    @Expose
+    private String parkingStart;
+
+    @SerializedName("parkingEnd")
+    @Expose
+    private String parkingEnd;
+
+    @SerializedName("PrepayHours")
+    @Expose
+    private int PrepayHours;
+
+    public Boolean getOnParking() {
+        return onParking;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getCarNumber() {
+        return carNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getParkigName() {
+        return parkigName;
+    }
+
+    public String getParkingStart() {
+        return parkingStart;
+    }
+
+    public String getParkingEnd() {
+        return parkingEnd;
+    }
+
+    public int getPrepayHours() {
+        return PrepayHours;
+    }
 }

@@ -24,8 +24,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private GetTokenApi service;
     @NonNull
-    private String myToken;
+    private String myToken, myName;
     private TemporaryDataStorage temporaryDataStorage = new TemporaryDataStorage();
+    private SharedPreferences sPrefToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
 
                 TokenRequest tokenRequest = new TokenRequest();
 
@@ -79,18 +78,20 @@ public class LoginActivity extends AppCompatActivity {
 
                                 try {
                                     myToken = response.body().getAccess_token();
-                                    temporaryDataStorage.setStoredToken(myToken);
-
+                                    myName = response.body().getLogin();
                                 }catch (NullPointerException e){
                                     Toast.makeText(LoginActivity.this, "Помилка доступу: "+e, Toast.LENGTH_SHORT).show();
                                 }
 
-
-                                SharedPreferences sPrefToken;
                                 sPrefToken = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
                                 SharedPreferences.Editor ed = sPrefToken.edit();
                                 ed.putString(getResources().getString(R.string.app_field_token), myToken);
                                 ed.commit();
+
+                                sPrefToken = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
+                                SharedPreferences.Editor edl = sPrefToken.edit();
+                                edl.putString(getResources().getString(R.string.app_field_user), myName);
+                                edl.commit();
 
 
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);

@@ -22,6 +22,7 @@ public interface GetTokenApi {
     @POST("api/token")
     Call<TokenResponse> getTokenAccess(@Body TokenRequest tokenRequest);
 
+    //Создать инцидент
     @POST("api/add_car_incident")
     Call<AddCarIncResponse> addNewIncident(@Header("Authorization") String token, @Body AddCarIncRequest addCarIncRequest);
 

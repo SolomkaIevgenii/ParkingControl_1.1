@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_main_url">http://192.168.1.68:32771/</string>
+    <string name="app_main_url">http://inspection.24parking.com.ua/api/token/</string>
     <string name="app_folder_name">MyData</string>
     <string name="app_field_token">token</string>
     <string name="app_field_user">name</string>

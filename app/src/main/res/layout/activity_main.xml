@@ -4,46 +4,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackgroundGeneral"
     tools:context=".MainActivity"
     tools:menu="">
 
+    <ImageView
+        android:id="@+id/imageLogoCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorLogoBack"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintEnd_toStartOf="@+id/imageHelperCheck1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageHelperCheck2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/lodo_activity" />
+
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="180.05dp"
-        android:layout_height="91dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:contentDescription="@string/app_name"
+        android:id="@+id/imageHelperCheck1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoCheck"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageLogoCheck"
+        app:layout_constraintTop_toTopOf="@+id/imageLogoCheck"
+        app:srcCompat="@color/colorLogoBack" />
+
+    <ImageView
+        android:id="@+id/imageHelperCheck2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoCheck"
+        app:layout_constraintEnd_toStartOf="@+id/imageLogoCheck"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/colorAccent" />
+        app:layout_constraintTop_toTopOf="@+id/imageLogoCheck"
+        app:srcCompat="@color/colorLogoBack" />
 
     <Button
         android:id="@+id/buttonCheck"
         android:layout_width="300dp"
         android:layout_height="60dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
         android:text="Перевірити оплату"
+        app:layout_constraintBottom_toTopOf="@+id/buttonTicketIssue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/buttonTicketIssue"
         android:layout_width="300dp"
         android:layout_height="60dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Оформити порушення"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonCheck" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonHistory"

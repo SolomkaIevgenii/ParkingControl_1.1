@@ -4,29 +4,29 @@ public class AddCarIncRequest {
 
     private String carNumber;
     private String carOwner;
-    private String id;
+    private int id;
     private String author;
-    private String authorId;
+    private int authorId;
     private String createDate;
     private String series;
     private String number;
     private String fullDescription;
     private String shortDescription;
     private String incidentType;
-    private String incidentTypeId;
+    private int incidentTypeId;
     private String incidentAddress;
     private String lawEnactment;
-    private String lawEnactmentId;
-    private String penaltyAmount;
+    private int lawEnactmentId;
+    private double penaltyAmount;
     private String PenaltyPaymentDate;
     private String IncidentStatus;
-    private String incidentStatusId;
+    private int incidentStatusId;
     private String location;
-    private String locationId;
-    private String forwardedToCustomsService;
-    private String forwardedToExecutiveService;
+    private int locationId;
+    private boolean forwardedToCustomsService;
+    private boolean forwardedToExecutiveService;
     private String documentType;
-    private String documentTypeId;
+    private int documentTypeId;
 
 
     public String getCarNumber() {
@@ -45,11 +45,11 @@ public class AddCarIncRequest {
         this.carOwner = carOwner;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -61,11 +61,11 @@ public class AddCarIncRequest {
         this.author = author;
     }
 
-    public String getAuthorId() {
+    public int getAuthorId() {
         return authorId;
     }
 
-    public void setAuthorId(String authorId) {
+    public void setAuthorId(int authorId) {
         this.authorId = authorId;
     }
 
@@ -117,11 +117,11 @@ public class AddCarIncRequest {
         this.incidentType = incidentType;
     }
 
-    public String getIncidentTypeId() {
+    public int getIncidentTypeId() {
         return incidentTypeId;
     }
 
-    public void setIncidentTypeId(String incidentTypeId) {
+    public void setIncidentTypeId(int incidentTypeId) {
         this.incidentTypeId = incidentTypeId;
     }
 
@@ -141,19 +141,19 @@ public class AddCarIncRequest {
         this.lawEnactment = lawEnactment;
     }
 
-    public String getLawEnactmentId() {
+    public int getLawEnactmentId() {
         return lawEnactmentId;
     }
 
-    public void setLawEnactmentId(String lawEnactmentId) {
+    public void setLawEnactmentId(int lawEnactmentId) {
         this.lawEnactmentId = lawEnactmentId;
     }
 
-    public String getPenaltyAmount() {
+    public double getPenaltyAmount() {
         return penaltyAmount;
     }
 
-    public void setPenaltyAmount(String penaltyAmount) {
+    public void setPenaltyAmount(double penaltyAmount) {
         this.penaltyAmount = penaltyAmount;
     }
 
@@ -173,11 +173,11 @@ public class AddCarIncRequest {
         IncidentStatus = incidentStatus;
     }
 
-    public String getIncidentStatusId() {
+    public int getIncidentStatusId() {
         return incidentStatusId;
     }
 
-    public void setIncidentStatusId(String incidentStatusId) {
+    public void setIncidentStatusId(int incidentStatusId) {
         this.incidentStatusId = incidentStatusId;
     }
 
@@ -189,27 +189,27 @@ public class AddCarIncRequest {
         this.location = location;
     }
 
-    public String getLocationId() {
+    public int getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(String locationId) {
+    public void setLocationId(int locationId) {
         this.locationId = locationId;
     }
 
-    public String getForwardedToCustomsService() {
+    public boolean getForwardedToCustomsService() {
         return forwardedToCustomsService;
     }
 
-    public void setForwardedToCustomsService(String forwardedToCustomsService) {
+    public void setForwardedToCustomsService(boolean forwardedToCustomsService) {
         this.forwardedToCustomsService = forwardedToCustomsService;
     }
 
-    public String getForwardedToExecutiveService() {
+    public boolean getForwardedToExecutiveService() {
         return forwardedToExecutiveService;
     }
 
-    public void setForwardedToExecutiveService(String forwardedToExecutiveService) {
+    public void setForwardedToExecutiveService(boolean forwardedToExecutiveService) {
         this.forwardedToExecutiveService = forwardedToExecutiveService;
     }
 
@@ -221,11 +221,11 @@ public class AddCarIncRequest {
         this.documentType = documentType;
     }
 
-    public String getDocumentTypeId() {
+    public int getDocumentTypeId() {
         return documentTypeId;
     }
 
-    public void setDocumentTypeId(String documentTypeId) {
+    public void setDocumentTypeId(int documentTypeId) {
         this.documentTypeId = documentTypeId;
     }
 }
