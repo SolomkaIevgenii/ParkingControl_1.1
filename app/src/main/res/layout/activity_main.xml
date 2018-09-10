@@ -18,7 +18,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageHelperCheck2"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/lodo_activity" />
+        app:srcCompat="@mipmap/ic_logo_main" />
 
 
     <ImageView
@@ -49,6 +49,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:background="@mipmap/ic_button_general_pressed"
         android:text="Перевірити оплату"
         app:layout_constraintBottom_toTopOf="@+id/buttonTicketIssue"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,6 +64,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@mipmap/ic_button_general_pressed"
         android:text="Оформити порушення"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -77,6 +79,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:background="@mipmap/ic_button_general_pressed"
         android:text="Історія оформлень"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -26,9 +26,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FillTicketActivity extends AppCompatActivity {
 
-    private TextView issueDate = findViewById(R.id.textDateIssue);
-    private TextView authorName = findViewById(R.id.textAuthorView);
-    private TextView carN = findViewById(R.id.textCarNResult);
+    //private TextView issueDate = findViewById(R.id.textDateIssue);
+    //private TextView authorName = findViewById(R.id.textAuthorView);
+    //private TextView carN = findViewById(R.id.textCarNResult);
     private String url = getString(R.string.app_main_url);
     private SharedPreferences sPref;
     private GetTokenApi service;
@@ -49,11 +49,7 @@ public class FillTicketActivity extends AppCompatActivity {
         final String myToken = sPref.getString(getResources().getString(R.string.app_field_token), "");
 
         sPref = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
-        final String car = sPref.getString(getResources().getString(R.string.app_field_carNumber), "");
-
-        issueDate.setText("Дата постанови: "+currentDate);
-        authorName.setText("Інспектор: "+myName);
-        carN.setText("Номер авто: "+car);
+        final String carN = sPref.getString(getResources().getString(R.string.app_field_carNumber), "");
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(url)
@@ -68,30 +64,11 @@ public class FillTicketActivity extends AppCompatActivity {
 
                 AddCarIncRequest addCarIncRequest = new AddCarIncRequest();
 
-                addCarIncRequest.setAuthor(myName);
-                addCarIncRequest.setCarNumber(car);
-                addCarIncRequest.setCreateDate(currentDate);
-                addCarIncRequest.setCarOwner("CFG 888");
-                addCarIncRequest.setId(0);
-                addCarIncRequest.setAuthorId(1);
-                addCarIncRequest.setSeries("АБВ");
-                addCarIncRequest.setNumber("111222333");
-                addCarIncRequest.setFullDescription(null);
-                addCarIncRequest.setShortDescription(null);
-                addCarIncRequest.setIncidentType(null);
-                addCarIncRequest.setIncidentTypeId(1);
-                addCarIncRequest.setLawEnactment(null);
-                addCarIncRequest.setLawEnactmentId(1);
-                addCarIncRequest.setPenaltyAmount(0.0);
-                addCarIncRequest.setPenaltyPaymentDate(null);
-                addCarIncRequest.setIncidentStatus(null);
-                addCarIncRequest.setIncidentStatusId(4);
-                addCarIncRequest.setLocation(null);
-                addCarIncRequest.setLocationId(1);
-                addCarIncRequest.setForwardedToCustomsService(false);
-                addCarIncRequest.setForwardedToExecutiveService(false);
-                addCarIncRequest.setDocumentType(null);
-                addCarIncRequest.setDocumentTypeId(1);
+                addCarIncRequest.setCarNumber(carN);
+                addCarIncRequest.setCarNumber("222");
+                addCarIncRequest.setDescription("222");
+                addCarIncRequest.setCarDriverContacts("222");
+                addCarIncRequest.setGpsLong(0.0);
 
                 final Call<AddCarIncResponse> responseCall = service.addNewIncident(myToken, addCarIncRequest);
 

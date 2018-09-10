@@ -33,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        EditText
+
+
         String url = getString(R.string.app_main_url);
 
         final Retrofit retrofit = new Retrofit.Builder()

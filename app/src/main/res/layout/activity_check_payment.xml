@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageHelperCheck2"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/lodo_activity" />
+        app:srcCompat="@mipmap/ic_logo_main" />
 
 
     <ImageView
