@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol.ParkingPaymentCheck;
+package com.example.john.parkingcontrol.Activity.CheckCar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,7 +27,7 @@ public class EnterNumberActivity extends AppCompatActivity {
 
                 EditText carNumber = findViewById(R.id.editTextCarNumber);
                 String finalCarNumber = carNumber.getText().toString();
-                String dataType = getResources().getString(R.string.app_field_carNumber);
+                String dataType = getResources().getString(R.string.sp_field_carNumber);
 
                 saveData(finalCarNumber, dataType);
 
@@ -38,7 +38,7 @@ public class EnterNumberActivity extends AppCompatActivity {
         });
     }
     private void saveData(String finalCarNumber, String dataType){
-        sPref = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(dataType, finalCarNumber);
         ed.commit();

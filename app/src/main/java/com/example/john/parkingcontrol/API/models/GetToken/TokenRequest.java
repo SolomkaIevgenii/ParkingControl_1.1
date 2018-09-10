@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol.API.models;
+package com.example.john.parkingcontrol.API.models.GetToken;
 
 public class TokenRequest {
 

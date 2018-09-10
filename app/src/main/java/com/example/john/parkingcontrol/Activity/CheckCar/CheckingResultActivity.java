@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol.ParkingPaymentCheck;
+package com.example.john.parkingcontrol.Activity.CheckCar;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,8 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
-import com.example.john.parkingcontrol.API.models.PaymentStatusRequest;
-import com.example.john.parkingcontrol.API.models.PaymentStatusResponse;
+import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarRequest;
+import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarResponse;
 import com.example.john.parkingcontrol.R;
 
 import retrofit2.Call;
@@ -80,15 +80,15 @@ public class CheckingResultActivity extends AppCompatActivity {
     }
 
     public void sendRequest(){
-        PaymentStatusRequest paymentStatusRequest = new PaymentStatusRequest();
+        CheckCarRequest checkCarRequest = new CheckCarRequest();
 
-        loadData(getResources().getString(R.string.app_field_carNumber));
-        paymentStatusRequest.setCarnumber(carNumber);
-        paymentStatusRequest.setToken(tokenStaticTemporary);
-        final Call<PaymentStatusResponse> requestCall = service.getPaymentStatus(paymentStatusRequest);
-        requestCall.enqueue(new Callback<PaymentStatusResponse>() {
+        loadData(getResources().getString(R.string.sp_field_carNumber));
+        checkCarRequest.setCarnumber(carNumber);
+        checkCarRequest.setToken(tokenStaticTemporary);
+        final Call<CheckCarResponse> requestCall = service.getPaymentStatus(checkCarRequest);
+        requestCall.enqueue(new Callback<CheckCarResponse>() {
             @Override
-            public void onResponse(Call<PaymentStatusResponse> call, Response<PaymentStatusResponse> response) {
+            public void onResponse(Call<CheckCarResponse> call, Response<CheckCarResponse> response) {
 
                 resultView = findViewById(R.id.textCarNResult);
                 hours = findViewById(R.id.textHours);
@@ -148,14 +148,14 @@ public class CheckingResultActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<PaymentStatusResponse> call, Throwable t) {
+            public void onFailure(Call<CheckCarResponse> call, Throwable t) {
 
             }
 
         });
     }
     private void loadData(String dataType){
-        sPref = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         carNumber = sPref.getString(dataType, "");
     }
 
@@ -175,7 +175,7 @@ public class CheckingResultActivity extends AppCompatActivity {
         mBackPressed = System.currentTimeMillis();
     }
     public void badResult(){
-        loadData(getResources().getString(R.string.app_field_carNumber));
+        loadData(getResources().getString(R.string.sp_field_carNumber));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Номер авто: "+carNumber);
         builder.setMessage("Розділ у розробці. Натисніть ОК для переходу в попередне меню");

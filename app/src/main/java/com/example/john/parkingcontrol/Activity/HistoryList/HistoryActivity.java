@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol.HistoryList;
+package com.example.john.parkingcontrol.Activity.HistoryList;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

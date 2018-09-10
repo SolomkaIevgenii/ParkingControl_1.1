@@ -1,8 +1,7 @@
-package com.example.john.parkingcontrol;
+package com.example.john.parkingcontrol.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,9 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
-import com.example.john.parkingcontrol.API.models.TokenRequest;
-import com.example.john.parkingcontrol.API.models.TokenResponse;
+import com.example.john.parkingcontrol.API.models.GetToken.TokenRequest;
+import com.example.john.parkingcontrol.API.models.GetToken.TokenResponse;
 import com.example.john.parkingcontrol.DifferentHelpers.TemporaryDataStorage;
+import com.example.john.parkingcontrol.R;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -133,14 +133,14 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(LoginActivity.this, "Помилка доступу: "+e, Toast.LENGTH_SHORT).show();
                                 }
 
-                                sPrefToken = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
+                                sPrefToken = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
                                 SharedPreferences.Editor ed = sPrefToken.edit();
-                                ed.putString(getResources().getString(R.string.app_field_token), myToken);
+                                ed.putString(getResources().getString(R.string.sp_field_token), myToken);
                                 ed.commit();
 
-                                sPrefToken = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
+                                sPrefToken = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
                                 SharedPreferences.Editor edl = sPrefToken.edit();
-                                edl.putString(getResources().getString(R.string.app_field_user), myName);
+                                edl.putString(getResources().getString(R.string.sp_field_user), myName);
                                 edl.commit();
 
 

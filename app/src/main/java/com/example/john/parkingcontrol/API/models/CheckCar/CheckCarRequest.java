@@ -1,6 +1,6 @@
-package com.example.john.parkingcontrol.API.models;
+package com.example.john.parkingcontrol.API.models.CheckCar;
 
-public class PaymentStatusRequest {
+public class CheckCarRequest {
 
     private String token;
     private String carnumber;

@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol;
+package com.example.john.parkingcontrol.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.john.parkingcontrol.ParkingPaymentCheck.CheckPaymentActivity;
+import com.example.john.parkingcontrol.Activity.CheckCar.CheckPaymentActivity;
+import com.example.john.parkingcontrol.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         SharedPreferences sPref;
-        sPref = getSharedPreferences(getResources().getString(R.string.app_folder_name), MODE_PRIVATE);
-        myToken = sPref.getString(getResources().getString(R.string.app_field_token), "");
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
 
         findViewById(R.id.buttonCheck).setOnClickListener(new View.OnClickListener() {
             @Override

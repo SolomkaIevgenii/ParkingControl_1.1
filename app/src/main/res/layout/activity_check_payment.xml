@@ -5,40 +5,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ParkingPaymentCheck.CheckPaymentActivity">
+    tools:context=".Activity.CheckCar.CheckPaymentActivity">
 
     <ImageView
-        android:id="@+id/imageLogoCheck"
+        android:id="@+id/imageLogoFill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorLogoBack"
         android:contentDescription="@string/app_name"
-        app:layout_constraintEnd_toStartOf="@+id/imageHelperCheck1"
+        app:layout_constraintEnd_toStartOf="@+id/imageHelperFill_1"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageHelperCheck2"
+        app:layout_constraintStart_toEndOf="@+id/imageHelperFill_2"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_logo_main" />
 
 
     <ImageView
-        android:id="@+id/imageHelperCheck1"
+        android:id="@+id/imageHelperFill_1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageLogoCheck"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoFill"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageLogoCheck"
-        app:layout_constraintTop_toTopOf="@+id/imageLogoCheck"
+        app:layout_constraintStart_toEndOf="@+id/imageLogoFill"
+        app:layout_constraintTop_toTopOf="@+id/imageLogoFill"
         app:srcCompat="@color/colorLogoBack" />
 
     <ImageView
-        android:id="@+id/imageHelperCheck2"
+        android:id="@+id/imageHelperFill_2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageLogoCheck"
-        app:layout_constraintEnd_toStartOf="@+id/imageLogoCheck"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoFill"
+        app:layout_constraintEnd_toStartOf="@+id/imageLogoFill"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageLogoCheck"
+        app:layout_constraintTop_toTopOf="@+id/imageLogoFill"
         app:srcCompat="@color/colorLogoBack" />
 
     <Button
@@ -51,7 +51,7 @@
         android:text="Введіть номер автомобіля"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageLogoCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/imageLogoFill" />
 
     <Button
         android:id="@+id/buttonQRScannerSet"

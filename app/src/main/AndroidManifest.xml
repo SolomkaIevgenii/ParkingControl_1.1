@@ -12,22 +12,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity android:name=".Activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".ParkingListActivity" />
-        <activity android:name=".ParkingPaymentCheck.CheckPaymentActivity" />
-        <activity android:name=".ParkingPaymentCheck.EnterNumberActivity" />
-        <activity android:name=".ParkingPaymentCheck.ScanQRActivity" />
-        <activity android:name=".ParkingPaymentCheck.CheckingResultActivity" />
-        <activity android:name=".HistoryList.HistoryActivity" />
-        <activity android:name=".TIcketIssue.FillTicketActivity" />
-        <activity android:name=".PrintActivity"></activity>
+        <activity android:name=".Activity.MainActivity" />
+        <activity android:name=".Activity.ParkingListActivity" />
+        <activity android:name=".Activity.CheckCar.CheckPaymentActivity" />
+        <activity android:name=".Activity.CheckCar.EnterNumberActivity" />
+        <activity android:name=".Activity.CheckCar.ScanQRActivity" />
+        <activity android:name=".Activity.CheckCar.CheckingResultActivity" />
+        <activity android:name=".Activity.HistoryList.HistoryActivity" />
+        <activity android:name=".Activity.TIcketIssue.FillTicketActivity" />
+        <activity android:name=".Activity.PrintActivity"></activity>
     </application>
 
 </manifest>

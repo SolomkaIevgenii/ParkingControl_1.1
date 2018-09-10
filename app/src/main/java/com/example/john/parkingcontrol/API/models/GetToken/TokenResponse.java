@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol.API.models;
+package com.example.john.parkingcontrol.API.models.GetToken;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol.ParkingPaymentCheck;
+package com.example.john.parkingcontrol.Activity.CheckCar;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

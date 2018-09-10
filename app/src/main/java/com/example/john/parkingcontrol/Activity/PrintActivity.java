@@ -1,4 +1,4 @@
-package com.example.john.parkingcontrol;
+package com.example.john.parkingcontrol.Activity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import com.example.john.parkingcontrol.R;
 
 import java.io.OutputStream;
 import java.text.DateFormat;
@@ -74,6 +76,12 @@ public class PrintActivity extends AppCompatActivity {
                         mmOutputStream.close();
                         mmSocket.close();
 
+                    }
+                    else{
+                        Toast.makeText(this, "Принтер не знайдено, переконайтесь що він увімнений, та підключений", Toast.LENGTH_LONG).show();
+                        onBackPressed();
+                        finish();
+                        break;
                     }
                 }
             }

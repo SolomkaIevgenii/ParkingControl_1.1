@@ -1,9 +1,9 @@
-package com.example.john.parkingcontrol.API.models;
+package com.example.john.parkingcontrol.API.models.CheckCar;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PaymentStatusResponse {
+public class CheckCarResponse {
 
     @SerializedName("onParking")
     @Expose
