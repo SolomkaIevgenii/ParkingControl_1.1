@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.john.parkingcontrol">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -25,7 +26,8 @@
         <activity android:name=".ParkingPaymentCheck.ScanQRActivity" />
         <activity android:name=".ParkingPaymentCheck.CheckingResultActivity" />
         <activity android:name=".HistoryList.HistoryActivity" />
-        <activity android:name=".TIcketIssue.FillTicketActivity"></activity>
+        <activity android:name=".TIcketIssue.FillTicketActivity" />
+        <activity android:name=".PrintActivity"></activity>
     </application>
 
 </manifest>

@@ -2,10 +2,16 @@ package com.example.john.parkingcontrol;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,14 +33,58 @@ public class LoginActivity extends AppCompatActivity {
     private String myToken, myName;
     private TemporaryDataStorage temporaryDataStorage = new TemporaryDataStorage();
     private SharedPreferences sPrefToken;
+    private TextWatcher textWatcher;
+    private EditText enteredLogin;
+    private EditText enteredPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        EditText
+        ImageView imageView = findViewById(R.id.imageLogoLogin);
 
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, PrintActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        final TextView loginEntered = findViewById(R.id.editTextLogin);
+        final TextView passwordEntered = findViewById(R.id.editTextPassword);
+        enteredLogin = findViewById(R.id.editTextLogin);
+        enteredPassword = findViewById(R.id.editTextPassword);
+
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                Toast toast =  Toast.makeText(LoginActivity.this, "Логін та пароль мають складатися не меньш ніж 3-х символів", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.show();
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (loginEntered.getText().toString().length()>=3 && passwordEntered.getText().toString().length()>=3){
+                    findViewById(R.id.buttonEnter).setEnabled(true);
+                }
+                else if (loginEntered.getText().toString().length()<3 || passwordEntered.getText().toString().length()<3){
+                    findViewById(R.id.buttonEnter).setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        enteredLogin.addTextChangedListener(textWatcher);
+        enteredPassword.addTextChangedListener(textWatcher);
 
         String url = getString(R.string.app_main_url);
 
@@ -53,9 +103,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 TokenRequest tokenRequest = new TokenRequest();
-
-                TextView loginEntered = findViewById(R.id.editTextLogin);
-                TextView passwordEntered = findViewById(R.id.editTextPassword);
 
                 //Импорт данных в клас, для отправки запроса в Json
                 tokenRequest.setLogin(loginEntered.getText().toString());

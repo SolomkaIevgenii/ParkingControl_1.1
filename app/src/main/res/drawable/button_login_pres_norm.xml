@@ -8,6 +8,10 @@
         android:drawable="@mipmap/ic_button_general_pressed"
         android:state_focused="true"
         />
+    <item
+        android:drawable="@mipmap/ic_button_general_enabled"
+        android:state_enabled="false"
+        />
 
     <item android:drawable="@mipmap/ic_button_general_normal"/>
 
