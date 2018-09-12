@@ -2,6 +2,7 @@ package com.example.john.parkingcontrol.API.interfaces;
 
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncRequest;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncResponse;
+import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
 import com.example.john.parkingcontrol.API.models.ListCarIncRequest;
 import com.example.john.parkingcontrol.API.models.ListCarIncResponse;
 import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarResponse;
@@ -27,12 +28,13 @@ public interface GetTokenApi {
     @POST("api/token")
     Call<TokenResponse> getTokenAccess(@Body TokenRequest tokenRequest);
 
+    //Получить Guid
+    @POST("api/guid")
+    Call<GuidResponse> getGuid(@Header("Authorization") String token);
+
     //Создать инцидент
     @POST("api/add_car_incident")
     Call<AddCarIncResponse> addNewIncident(@Header("Authorization") String token, @Body AddCarIncRequest addCarIncRequest);
-
-    @POST("api/token")
-    Call<ListCarIncResponse> get(@Header("Authorization") String token, @Body ListCarIncRequest listCarIncRequest);
 
     //Статус оплаты за парковку
     @POST("ExtApi/CheckCar")

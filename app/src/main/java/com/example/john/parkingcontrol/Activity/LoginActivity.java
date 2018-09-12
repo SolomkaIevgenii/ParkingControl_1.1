@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenRequest;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenResponse;
+import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
 import com.example.john.parkingcontrol.DifferentHelpers.TemporaryDataStorage;
 import com.example.john.parkingcontrol.R;
 
@@ -47,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(LoginActivity.this, PrintActivity.class);
                 startActivity(intent);
             }
@@ -60,11 +62,6 @@ public class LoginActivity extends AppCompatActivity {
         textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                Toast toast =  Toast.makeText(LoginActivity.this, "Логін та пароль мають складатися не меньш ніж 3-х символів", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                toast.show();
-
             }
 
             @Override

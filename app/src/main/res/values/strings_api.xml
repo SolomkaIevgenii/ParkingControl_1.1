@@ -6,6 +6,7 @@
     <string name="car_n_empty_full">CarN_Empty_Full</string>
     <string name="sp_folder_name">MyData</string>
     <string name="sp_field_token">token</string>
+    <string name="sp_field_guid">guid</string>
     <string name="sp_field_user">name</string>
     <string name="sp_field_hash">hash</string>
     <string name="sp_field_carNumber">carNumber</string>
