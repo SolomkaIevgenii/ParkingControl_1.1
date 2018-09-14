@@ -2,6 +2,7 @@ package com.example.john.parkingcontrol.API.interfaces;
 
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncRequest;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncResponse;
+import com.example.john.parkingcontrol.API.models.AddCarInc.UploadResponse;
 import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
 import com.example.john.parkingcontrol.API.models.ListCarIncRequest;
 import com.example.john.parkingcontrol.API.models.ListCarIncResponse;
@@ -45,7 +46,7 @@ public interface GetTokenApi {
     @POST("api/token")
     Call<TokenResponse> getTokenAccessPost(@Field("login") String superLogin, @Field("password") String superPassword);
 
-    @Multipart
-    @POST("api/?????")
-    Call<ResponseBody> uploadPhoto(@Header("Authorization") String token, @Part("fileName")RequestBody fileName, @Part MultipartBody.Part photo, @Part("fileName")RequestBody fileName1, @Part MultipartBody.Part photo1);
+    @FormUrlEncoded
+    @POST("api/incident_upload_file")
+    Call<UploadResponse> uploadPhoto(@Field("Guid") String guid, @Field("Base64StringContent") String file);
 }

@@ -14,15 +14,15 @@
         android:layout_height="wrap_content"
         android:background="@color/colorLogoBack"
         android:contentDescription="@string/app_name"
-        app:layout_constraintEnd_toStartOf="@+id/imageHelperFill_1"
+        app:layout_constraintEnd_toStartOf="@+id/imageHelperPhoto_1"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageHelperFill_2"
+        app:layout_constraintStart_toEndOf="@+id/imageHelperPhoto_2"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_logo_main" />
 
 
     <ImageView
-        android:id="@+id/imageHelperFill_1"
+        android:id="@+id/imageHelperPhoto_1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageLogoFill"
@@ -33,7 +33,7 @@
         app:srcCompat="@color/colorLogoBack" />
 
     <ImageView
-        android:id="@+id/imageHelperFill_2"
+        android:id="@+id/imageHelperPhoto_2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageLogoFill"

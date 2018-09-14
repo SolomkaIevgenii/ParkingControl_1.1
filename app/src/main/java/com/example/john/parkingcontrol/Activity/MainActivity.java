@@ -13,6 +13,7 @@ import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
 import com.example.john.parkingcontrol.Activity.CheckCar.CheckPaymentActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
+import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
 import com.example.john.parkingcontrol.R;
 
 import retrofit2.Call;
@@ -28,6 +29,42 @@ public class MainActivity extends AppCompatActivity {
     private String myToken, myGuid;
     private SharedPreferences sPref;
     private GetTokenApi service;
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+
+        String url = getString(R.string.app_main_url);
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        service = retrofit.create(GetTokenApi.class);
+        final Call<GuidResponse> responseCallGuid = service.getGuid("Bearer "+myToken);
+
+        responseCallGuid.enqueue(new Callback<GuidResponse>() {
+            @Override
+            public void onResponse(Call<GuidResponse> call, Response<GuidResponse> response) {
+                if(response.code()==200){
+
+                    myGuid= response.body().getGuid();
+
+                    //sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                    //SharedPreferences.Editor ed = sPref.edit();
+                    //ed.putString(getResources().getString(R.string.sp_field_guid), myGuid);
+                    //ed.commit();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GuidResponse> call, Throwable t) {
+
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,53 +92,20 @@ public class MainActivity extends AppCompatActivity {
         buttonTicketIssue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                v.setEnabled(false);
-                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-                myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
-
-                String url = getString(R.string.app_main_url);
-                final Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(url)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-
-                service = retrofit.create(GetTokenApi.class);
-                final Call<GuidResponse> responseCallGuid = service.getGuid("Bearer "+myToken);
-
-                responseCallGuid.enqueue(new Callback<GuidResponse>() {
-                    @Override
-                    public void onResponse(Call<GuidResponse> call, Response<GuidResponse> response) {
-                        if(response.code()==200){
-
-                            myGuid= response.body().getGuid();
-
-                            //sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-                            //SharedPreferences.Editor ed = sPref.edit();
-                            //ed.putString(getResources().getString(R.string.sp_field_guid), myGuid);
-                            //ed.commit();
-
-
+                            v.setEnabled(false);
                             Intent intent = new Intent(MainActivity.this, FillTicketActivity.class);
                             intent.putExtra("guid", myGuid);
                             startActivity(intent);
                             v.setEnabled(true);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<GuidResponse> call, Throwable t) {
-
-                    }
-                });
             }
         });
 
         buttonHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.setEnabled(false);
-                //Toast.makeText(MainActivity.this, "Розділ у розробці", Toast.LENGTH_SHORT).show();
-                //v.setEnabled(true);
+                Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
+                intent.putExtra("guid", myGuid);
+                startActivity(intent);
             }
         });
     }

@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -27,7 +32,19 @@
         <activity android:name=".Activity.CheckCar.CheckingResultActivity" />
         <activity android:name=".Activity.HistoryList.HistoryActivity" />
         <activity android:name=".Activity.TIcketIssue.FillTicketActivity" />
-        <activity android:name=".Activity.PrintActivity"></activity>
+        <activity android:name=".Activity.PrintActivity" />
+        <activity android:name=".Activity.TIcketIssue.Photo.PhotoActivity"></activity>
+
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

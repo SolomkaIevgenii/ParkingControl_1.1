@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenRequest;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenResponse;
-import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
 import com.example.john.parkingcontrol.DifferentHelpers.TemporaryDataStorage;
 import com.example.john.parkingcontrol.R;
 
@@ -43,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        ImageView imageView = findViewById(R.id.imageLogoLogin);
+        ImageView imageView = findViewById(R.id.imageLogoPhoto);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override

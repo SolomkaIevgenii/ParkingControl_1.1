@@ -8,37 +8,37 @@
     tools:context=".Activity.LoginActivity">
 
     <ImageView
-        android:id="@+id/imageLogoLogin"
+        android:id="@+id/imageLogoPhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorLogoBack"
         android:contentDescription="@string/app_name"
-        app:layout_constraintEnd_toStartOf="@+id/imageHelperFill_1"
+        app:layout_constraintEnd_toStartOf="@+id/imageHelperPhoto_1"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageHelperFill_2"
+        app:layout_constraintStart_toEndOf="@+id/imageHelperPhoto_2"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_logo_main" />
 
 
     <ImageView
-        android:id="@+id/imageHelperFill_1"
+        android:id="@+id/imageHelperPhoto_1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageLogoLogin"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoPhoto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageLogoLogin"
-        app:layout_constraintTop_toTopOf="@+id/imageLogoLogin"
+        app:layout_constraintStart_toEndOf="@+id/imageLogoPhoto"
+        app:layout_constraintTop_toTopOf="@+id/imageLogoPhoto"
         app:srcCompat="@color/colorLogoBack" />
 
     <ImageView
-        android:id="@+id/imageHelperFill_2"
+        android:id="@+id/imageHelperPhoto_2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageLogoLogin"
-        app:layout_constraintEnd_toStartOf="@+id/imageLogoLogin"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoPhoto"
+        app:layout_constraintEnd_toStartOf="@+id/imageLogoPhoto"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageLogoLogin"
+        app:layout_constraintTop_toTopOf="@+id/imageLogoPhoto"
         app:srcCompat="@color/colorLogoBack" />
 
     <android.support.constraint.ConstraintLayout
@@ -50,7 +50,7 @@
         android:background="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageLogoLogin">
+        app:layout_constraintTop_toBottomOf="@+id/imageLogoPhoto">
 
         <ImageView
             android:id="@+id/imageView5"
@@ -76,7 +76,8 @@
                 android:id="@+id/editTextLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/app_text_login" />
+                android:hint="@string/app_text_login"
+                android:text="admin"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -100,7 +101,8 @@
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:textColor="@android:color/black"
-                android:textColorLink="@android:color/black"/>
+                android:textColorLink="@android:color/black"
+                android:text="admin"/>
         </android.support.design.widget.TextInputLayout>
 
         <Switch
