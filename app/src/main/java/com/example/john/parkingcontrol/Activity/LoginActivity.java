@@ -36,12 +36,19 @@ public class LoginActivity extends AppCompatActivity {
     private EditText enteredLogin;
     private EditText enteredPassword;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        ImageView imageView = findViewById(R.id.imageLogoPhoto);
+        enteredLogin = findViewById(R.id.editTextLogin);
+
+        if (enteredLogin.getText().toString().length()>3){
+            findViewById(R.id.buttonEnter).setEnabled(true);
+        }
+
+        ImageView imageView = findViewById(R.id.imageLogoMain);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +102,8 @@ public class LoginActivity extends AppCompatActivity {
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
+                v.setEnabled(false);
 
                 TokenRequest tokenRequest = new TokenRequest();
 
@@ -116,10 +124,12 @@ public class LoginActivity extends AppCompatActivity {
                 tokenRequestCall.enqueue(new Callback<TokenResponse>() {
                     @Override
                     public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                        v.setEnabled(true);
 
                         int statusCode = response.code();
                         switch (statusCode){
                             case 200:
+
 
                                 try {
                                     myToken = response.body().getAccess_token();
@@ -157,6 +167,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<TokenResponse> call, Throwable t) {
+                        v.setEnabled(true);
 
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.app_an_internet_error), Toast.LENGTH_SHORT).show();
 

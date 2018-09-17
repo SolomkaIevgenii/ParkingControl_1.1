@@ -31,8 +31,51 @@ public class MainActivity extends AppCompatActivity {
     private GetTokenApi service;
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button buttonTicketIssue =  findViewById(R.id.buttonTicketIssue);
+        Button buttonHistory =  findViewById(R.id.buttonHistory);
+
+
+
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+
+        findViewById(R.id.buttonCheck).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setEnabled(false);
+                Intent intent = new Intent(v.getContext(), CheckPaymentActivity.class);
+                startActivity(intent);
+                v.setEnabled(true);
+            }
+        });
+
+        buttonTicketIssue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                            v.setEnabled(false);
+                            Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
+                            intent.putExtra("guid", myGuid);
+                            startActivity(intent);
+                            v.setEnabled(true);
+            }
+        });
+
+        buttonHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        findViewById(R.id.buttonCheck).setEnabled(true);
+
         sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
 
@@ -64,56 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button buttonTicketIssue =  findViewById(R.id.buttonTicketIssue);
-        Button buttonHistory =  findViewById(R.id.buttonHistory);
-
-
-
-        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
-
-        findViewById(R.id.buttonCheck).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setEnabled(false);
-                Intent intent = new Intent(v.getContext(), CheckPaymentActivity.class);
-                startActivity(intent);
-                v.setEnabled(true);
-            }
-        });
-
-        buttonTicketIssue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                            v.setEnabled(false);
-                            Intent intent = new Intent(MainActivity.this, FillTicketActivity.class);
-                            intent.putExtra("guid", myGuid);
-                            startActivity(intent);
-                            v.setEnabled(true);
-            }
-        });
-
-        buttonHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
-                intent.putExtra("guid", myGuid);
-                startActivity(intent);
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        findViewById(R.id.buttonCheck).setEnabled(true);
     }
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private long mBackPressed;

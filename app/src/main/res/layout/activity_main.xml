@@ -8,39 +8,39 @@
     tools:context=".Activity.MainActivity"
     tools:menu="">
 
+
     <ImageView
-        android:id="@+id/imageLogoFill"
+        android:id="@+id/imageHelperMain_1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoMain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/colorLogoBack" />
+
+    <ImageView
+        android:id="@+id/imageHelperMain_2"
+        android:layout_width="0dp"
+        android:layout_height="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoMain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageHelperMain_1"
+        app:srcCompat="@color/colorLogoBack" />
+
+    <ImageView
+        android:id="@+id/imageLogoMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:background="@color/colorLogoBack"
         android:contentDescription="@string/app_name"
-        app:layout_constraintEnd_toStartOf="@+id/imageHelperPhoto_1"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageHelperPhoto_2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_logo_main" />
-
-
-    <ImageView
-        android:id="@+id/imageHelperPhoto_1"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageLogoFill"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageLogoFill"
-        app:layout_constraintTop_toTopOf="@+id/imageLogoFill"
-        app:srcCompat="@color/colorLogoBack" />
-
-    <ImageView
-        android:id="@+id/imageHelperPhoto_2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageLogoFill"
-        app:layout_constraintEnd_toStartOf="@+id/imageLogoFill"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageLogoFill"
-        app:srcCompat="@color/colorLogoBack" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_logo_main" />
 
     <Button
         android:id="@+id/buttonCheck"
@@ -54,7 +54,8 @@
         app:layout_constraintBottom_toTopOf="@+id/buttonTicketIssue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/colorWhite"/>
 
     <Button
         android:id="@+id/buttonTicketIssue"
@@ -70,7 +71,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/colorWhite"/>
 
     <Button
         android:id="@+id/buttonHistory"
@@ -81,8 +83,10 @@
         android:layout_marginTop="16dp"
         android:background="@mipmap/ic_button_general_pressed"
         android:text="Історія оформлень"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTicketIssue" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonTicketIssue"
+        android:textColor="@color/colorWhite"/>
 
 </android.support.constraint.ConstraintLayout>

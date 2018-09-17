@@ -1,6 +1,7 @@
 package com.example.john.parkingcontrol.Activity.TIcketIssue.Photo;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -20,11 +22,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.AddCarInc.UploadResponse;
+import com.example.john.parkingcontrol.Activity.LoginActivity;
+import com.example.john.parkingcontrol.Activity.MainActivity;
 import com.example.john.parkingcontrol.BuildConfig;
 import com.example.john.parkingcontrol.R;
 
@@ -48,7 +53,7 @@ public class PhotoActivity extends AppCompatActivity {
 
     private Button buttonChoose, buttonUpload, buttonTakePhoto;
     private ImageView preView;
-    private String file, myToken, myGuid, postPath;
+    private String myToken, myGuid, postPath, file;
     private String mImageFileLocation = "";
     private Retrofit retrofit;
     private Bitmap bitmap;
@@ -112,7 +117,7 @@ public class PhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 v.setEnabled(false);
-                final String file = imageToString();
+                //final String file = imageToString();
                 sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
                 myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
 
@@ -122,14 +127,32 @@ public class PhotoActivity extends AppCompatActivity {
                 uploadResponseCall.enqueue(new Callback<UploadResponse>() {
                     @Override
                     public void onResponse(Call<UploadResponse> call, Response<UploadResponse> response) {
-                        Toast.makeText(PhotoActivity.this, "+++++ "+response.code()+"GGG "+response.body().getIsSuccess(), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(PhotoActivity.this, "1+1 "+response.body().getDetailErrorMsg()+" "+response.body().getErrorMsg(), Toast.LENGTH_SHORT).show();
-                        v.setEnabled(true);
+                        if (response.code()==200) {
+                            if (response.body().getIsSuccess()) {
+                                TextView textView = findViewById(R.id.textView7);
+                                textView.setText(response.toString());
+                                v.setEnabled(true);
+                            }else if (response.code()==401){
+                                new AlertDialog.Builder(PhotoActivity.this)
+                                        .setTitle("Помилка")
+                                        .setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
+                                                "Вас буде перенаправлено на сторінку авторизації")
+                                        .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
+                                                PhotoActivity.this.finish();
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                            }
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<UploadResponse> call, Throwable t) {
-                        Toast.makeText(PhotoActivity.this, "Бля..." + t, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhotoActivity.this, "Помилка зв'язку, перевірте інтернет з'єднання", Toast.LENGTH_SHORT).show();
 
                         v.setEnabled(true);
 
@@ -157,6 +180,8 @@ public class PhotoActivity extends AppCompatActivity {
                     buttonChoose.setEnabled(false);
                     buttonTakePhoto.setEnabled(false);
                     buttonUpload.setEnabled(true);
+
+                    file = imageToString();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -169,12 +194,18 @@ public class PhotoActivity extends AppCompatActivity {
                     //postPath = mImageFileLocation;
                     bitmap = BitmapFactory.decodeFile(mImageFileLocation);
                     buttonUpload.setEnabled(true);
+                    buttonTakePhoto.setEnabled(false);
+
+                    file = imageToString();
 
                 }else{
                     Glide.with(this).load(fileUri).into(preView);
                     postPath = fileUri.getPath();
                     bitmap = BitmapFactory.decodeFile(fileUri.getPath());
                     buttonUpload.setEnabled(true);
+                    buttonTakePhoto.setEnabled(false);
+
+                    file = imageToString();
 
                 }
 
@@ -189,7 +220,7 @@ public class PhotoActivity extends AppCompatActivity {
     private String imageToString(){
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,10,byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG,50,byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imgByte,Base64.DEFAULT);
     }
