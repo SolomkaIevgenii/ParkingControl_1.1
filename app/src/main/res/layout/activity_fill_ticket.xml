@@ -41,7 +41,7 @@
         app:layout_constraintTop_toTopOf="@+id/imageLogoFill"
         app:srcCompat="@color/colorLogoBack" />
 
-    <android.support.design.widget.TextInputLayout
+    <EditText
         android:id="@+id/inputCarNumberInc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,14 +50,11 @@
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:inputType="numberDecimal"
+        android:hint="Номер автомобіля"
+        android:editable="true"
         app:layout_constraintTop_toBottomOf="@+id/imageLogoFill">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/editCarNumberInc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Номер автомобіля" />
-    </android.support.design.widget.TextInputLayout>
+    </EditText>
 
 
     <android.support.design.widget.TextInputLayout

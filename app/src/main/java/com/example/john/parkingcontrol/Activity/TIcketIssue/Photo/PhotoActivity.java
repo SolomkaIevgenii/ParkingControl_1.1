@@ -30,6 +30,7 @@ import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.AddCarInc.UploadResponse;
 import com.example.john.parkingcontrol.Activity.LoginActivity;
 import com.example.john.parkingcontrol.Activity.MainActivity;
+import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
 import com.example.john.parkingcontrol.BuildConfig;
 import com.example.john.parkingcontrol.R;
 
@@ -55,6 +56,7 @@ public class PhotoActivity extends AppCompatActivity {
     private ImageView preView;
     private String myToken, myGuid, postPath, file;
     private String mImageFileLocation = "";
+    private Boolean isEmptyNumber;
     private Retrofit retrofit;
     private Bitmap bitmap;
     private GetTokenApi service;
@@ -71,8 +73,7 @@ public class PhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_photo);
 
         myGuid = getIntent().getExtras().getString("guid");
-
-        Toast.makeText(this, "guid "+myGuid, Toast.LENGTH_SHORT).show();
+        isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
 
         buttonChoose = findViewById(R.id.buttonChoose);
         buttonUpload = findViewById(R.id.buttonUpload);
@@ -131,21 +132,49 @@ public class PhotoActivity extends AppCompatActivity {
                             if (response.body().getIsSuccess()) {
                                 TextView textView = findViewById(R.id.textView7);
                                 textView.setText(response.toString());
+                                Intent intent = new Intent(PhotoActivity.this, FillTicketActivity.class);
+                                intent.putExtra("guid", myGuid);
+                                intent.putExtra("isEmptyNumber", isEmptyNumber);
+                                startActivity(intent);
                                 v.setEnabled(true);
                             }else if (response.code()==401){
-                                new AlertDialog.Builder(PhotoActivity.this)
-                                        .setTitle("Помилка")
-                                        .setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
-                                                "Вас буде перенаправлено на сторінку авторизації")
-                                        .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
-                                                PhotoActivity.this.finish();
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                        .create()
-                                        .show();
+                                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
+                                        builder.setTitle("Помилка");
+                                        builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
+                                                "Вас буде перенаправлено на сторінку авторизації");
+                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        PhotoActivity.this.finish();
+                                        dialog.dismiss();
+                                        }
+                                    });
+                                    builder.setCancelable(false);
+                                    android.app.AlertDialog alertDialog = builder.create();
+                                    alertDialog.show();
+                                    v.setEnabled(true);
+
+                            }
+                            else{
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
+                                builder.setTitle("Помилка");
+                                builder.setMessage("Помилка, зверніться до адміністратора.");
+                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(PhotoActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        PhotoActivity.this.finish();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.setCancelable(false);
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                                v.setEnabled(true);
+
                             }
                         }
                     }
@@ -213,7 +242,9 @@ public class PhotoActivity extends AppCompatActivity {
 
         }
         else if (resultCode != RESULT_CANCELED) {
-            Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Невиправна помилка", Toast.LENGTH_LONG).show();
+            buttonUpload.setEnabled(false);
+            buttonTakePhoto.setEnabled(true);
         }
 
     }

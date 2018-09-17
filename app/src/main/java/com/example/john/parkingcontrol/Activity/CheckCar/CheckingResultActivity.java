@@ -2,6 +2,7 @@ package com.example.john.parkingcontrol.Activity.CheckCar;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,9 @@ import android.widget.Toast;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarRequest;
 import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarResponse;
+import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
+import com.example.john.parkingcontrol.Activity.PrintActivity;
+import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
 import com.example.john.parkingcontrol.R;
 
 import retrofit2.Call;
@@ -25,7 +29,8 @@ public class CheckingResultActivity extends AppCompatActivity {
 
     private GetTokenApi service;
     private SharedPreferences sPref;
-    private String carNumber;
+    private String carNumber, myGuid, myToken, responseCarNumber;
+    private Boolean isEmptyNumber;
     //private PaymentStatusRequest paymentStatusRequest = new PaymentStatusRequest();
     private String tokenStaticTemporary = "fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik";
 
@@ -37,6 +42,7 @@ public class CheckingResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checking_result);
+        myGuid = getIntent().getExtras().getString("guid");
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://parking.2click.money/")
@@ -72,7 +78,6 @@ public class CheckingResultActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 badResult();
-
             }
         });
 
@@ -113,12 +118,14 @@ public class CheckingResultActivity extends AppCompatActivity {
                             startTime.setVisibility(View.GONE);
                             endTime.setVisibility(View.GONE);
                             status.setVisibility(View.GONE);
+                            responseCarNumber = response.body().getCarNumber();
                             break;
                         }else if(response.body().getMessage().toString().equalsIgnoreCase("Пустий номер авто!")){
 
                             findViewById(R.id.buttonRefresh).setVisibility(View.GONE);
                             Button buttonOKtoBACK = findViewById(R.id.buttonOK);
                             buttonOKtoBACK.setText("Назад");
+                            buttonOKtoBACK.setVisibility(View.VISIBLE);
                             break;
 
                         }else{
@@ -128,15 +135,11 @@ public class CheckingResultActivity extends AppCompatActivity {
                             parkName.setText(response.body().getParkigName());
                             parkAddress.setText(response.body().getAddress());
                             startTime.setText("Заїхав: "+response.body().getParkingStart());
-                            endTime.setText("Оплачено до: "+response.body().getParkingEnd());
+                            endTime.setText("Сплачено до: "+response.body().getParkingEnd());
+                            findViewById(R.id.buttonRefresh).setVisibility(View.VISIBLE);
+                            findViewById(R.id.buttonOK).setVisibility(View.VISIBLE);
+                            break;
                         }
-
-
-
-
-                        Toast.makeText(CheckingResultActivity.this, response.body().getOnParking().toString() + " " + response.body().getMessage().toString(), Toast.LENGTH_SHORT).show();
-                        break;
-
 
                     default:
                         Toast.makeText(CheckingResultActivity.this, getResources().getString(R.string.app_an_error) + " " + response.code(), Toast.LENGTH_SHORT).show();
@@ -174,20 +177,51 @@ public class CheckingResultActivity extends AppCompatActivity {
 
         mBackPressed = System.currentTimeMillis();
     }
-    public void badResult(){
-        loadData(getResources().getString(R.string.sp_field_carNumber));
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Номер авто: "+carNumber);
-        builder.setMessage("Розділ у розробці. Натисніть ОК для переходу в попередне меню");
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+    private void badResult(){
+        isEmptyNumber=false;
+        getGuid();
+        Intent intent = new Intent(CheckingResultActivity.this, PhotoActivity.class);
+        intent.putExtra("guid", myGuid);
+        intent.putExtra("isEmptyNumber", isEmptyNumber);
+        intent.putExtra("responseCarNumber", responseCarNumber);
+        startActivity(intent);
+    }
+    private void getGuid(){
+
+        super.onResume();
+        findViewById(R.id.buttonCheck).setEnabled(true);
+
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+
+        String url = getString(R.string.app_main_url);
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        service = retrofit.create(GetTokenApi.class);
+        final Call<GuidResponse> responseCallGuid = service.getGuid("Bearer "+myToken);
+
+        responseCallGuid.enqueue(new Callback<GuidResponse>() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
+            public void onResponse(Call<GuidResponse> call, Response<GuidResponse> response) {
+                if(response.code()==200){
+
+                    myGuid= response.body().getGuid();
+
+                    //sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                    //SharedPreferences.Editor ed = sPref.edit();
+                    //ed.putString(getResources().getString(R.string.sp_field_guid), myGuid);
+                    //ed.commit();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GuidResponse> call, Throwable t) {
+
             }
         });
-        builder.setCancelable(false);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
     }
 }
 
