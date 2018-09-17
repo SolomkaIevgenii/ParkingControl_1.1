@@ -1,5 +1,6 @@
 package com.example.john.parkingcontrol.Activity.TIcketIssue;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.widget.Toast;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncRequest;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncResponse;
-import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
 import com.example.john.parkingcontrol.R;
 
 import java.text.DateFormat;
@@ -26,12 +26,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class FillTicketActivity extends AppCompatActivity {
-    private SharedPreferences sPref;
     private GetTokenApi service;
-    private Boolean isEmptyNumber;
     //private String myGuid;
-    private String myToken, myGuid, responseCarNumber;
-    private EditText enteredNumber;
+    private String myToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,22 +36,25 @@ public class FillTicketActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fill_ticket);
         Button button = findViewById(R.id.buttonSetIssue);
 
-        myGuid = getIntent().getExtras().getString("guid");
-        isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
-        responseCarNumber = getIntent().getExtras().getString("responseCarNumber");
+        SharedPreferences sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+        String myGuid = getIntent().getExtras().getString("guid");
+        Boolean isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
+        String responseCarNumber = getIntent().getExtras().getString("responseCarNumber");
 
         String url = getString(R.string.app_main_url);
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+        EditText enteredNumber;
         if (!isEmptyNumber){
             enteredNumber = findViewById(R.id.inputCarNumberInc);
             enteredNumber.setText(responseCarNumber);
             enteredNumber.setEnabled(false);
             //TODO Задать полям inputType, создать переход в АКТИВИТИ печати чека, сделать запрос чека, поправить везде логотип 18.09.2018
         }
-        else if (isEmptyNumber){
+        else {
             enteredNumber = findViewById(R.id.inputCarNumberInc);
             enteredNumber.setText(responseCarNumber);
         }
@@ -63,16 +63,12 @@ public class FillTicketActivity extends AppCompatActivity {
         //sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         //myGuid = sPref.getString(getResources().getString(R.string.sp_field_guid), "");
 
-        myGuid = getIntent().getExtras().getString("guid");
-        Toast.makeText(this, "Intent guid = "+myGuid, Toast.LENGTH_SHORT).show();
-
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-        final String currentDate = dateFormat.format(Calendar.getInstance().getTime());
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+        //final String currentDate = dateFormat.format(Calendar.getInstance().getTime());
 
         sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         final String carN = sPref.getString(getResources().getString(R.string.sp_field_carNumber), "");
 
-        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         service = retrofit.create(GetTokenApi.class);
 
         button.setOnClickListener(new View.OnClickListener() {
