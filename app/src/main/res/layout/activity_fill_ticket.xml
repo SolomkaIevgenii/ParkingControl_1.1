@@ -120,7 +120,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Опис події"
-            android:inputType="textShortMessage"/>
+            android:inputType="textShortMessage"
+            android:text="Порушення правил паркування" />
     </android.support.design.widget.TextInputLayout>
 
 
@@ -140,7 +141,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Адреса"
-            android:inputType="textPostalAddress"/>
+            android:inputType="textPostalAddress"
+            android:text="місто " />
     </android.support.design.widget.TextInputLayout>
 
 

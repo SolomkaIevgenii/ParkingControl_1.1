@@ -56,6 +56,7 @@ public class PhotoActivity extends AppCompatActivity {
     private Button buttonChoose, buttonUpload, buttonTakePhoto;
     private ImageView preView;
     private String myToken, myGuid, postPath, file;
+    private String responseCarNumber;
     private String mImageFileLocation = "";
     private Boolean isEmptyNumber;
     private Retrofit retrofit;
@@ -73,9 +74,10 @@ public class PhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
 
-        myGuid = getIntent().getExtras().getString("guid");
+        responseCarNumber = getIntent().getExtras().getString("responseCarNumber");
         isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
 
+        myGuid = getIntent().getExtras().getString("guid");
         buttonChoose = findViewById(R.id.buttonChoose);
         buttonUpload = findViewById(R.id.buttonUpload);
         buttonTakePhoto = findViewById(R.id.buttonTakePhoto);
@@ -90,7 +92,7 @@ public class PhotoActivity extends AppCompatActivity {
 
 
         String url = getString(R.string.app_main_url);
-        final Retrofit retrofit = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -136,6 +138,7 @@ public class PhotoActivity extends AppCompatActivity {
                                 Intent intent = new Intent(PhotoActivity.this, FillTicketActivity.class);
                                 intent.putExtra("guid", myGuid);
                                 intent.putExtra("isEmptyNumber", isEmptyNumber);
+                                intent.putExtra("responseCarNumber", responseCarNumber);
                                 startActivity(intent);
                                 v.setEnabled(true);
                             }else if (response.code()==401){
@@ -205,6 +208,10 @@ public class PhotoActivity extends AppCompatActivity {
 
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),path);
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1980, false);
                     preView.setImageBitmap(bitmap);
                     preView.setVisibility(View.VISIBLE);
                     buttonChoose.setEnabled(false);
@@ -223,11 +230,11 @@ public class PhotoActivity extends AppCompatActivity {
                     //Glide.with(this).load(mImageFileLocation).into(preView);
                     postPath = mImageFileLocation;
                     File f = new File(postPath);
-                    Bitmap bitmapF = BitmapFactory.decodeFile(f.getAbsolutePath(), null);
+                    bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), null);
                     Matrix matrix = new Matrix();
-                    bitmapF = Bitmap.createBitmap(bitmapF, 0, 0, bitmapF.getWidth(), bitmapF.getHeight(), matrix, true);
-                    bitmap = Bitmap.createScaledBitmap(bitmapF, 1024, 1980, false);
-                    //TODO Доделать
+                    matrix.postRotate(90);
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1980, false);
                     preView.setImageBitmap(bitmap);
                     buttonUpload.setEnabled(true);
                     buttonTakePhoto.setEnabled(false);
@@ -235,9 +242,14 @@ public class PhotoActivity extends AppCompatActivity {
                     file = imageToString();
 
                 }else{
-                    Glide.with(this).load(fileUri).into(preView);
-                    postPath = fileUri.getPath();
-                    bitmap = BitmapFactory.decodeFile(fileUri.getPath());
+                    //Glide.with(this).load(fileUri).into(preView);
+                    postPath = mImageFileLocation;
+                    File f = new File(postPath);
+                    bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), null);
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1980, false);
                     buttonUpload.setEnabled(true);
                     buttonTakePhoto.setEnabled(false);
 
@@ -258,7 +270,7 @@ public class PhotoActivity extends AppCompatActivity {
     private String imageToString(){
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,50,byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imgByte,Base64.DEFAULT);
     }

@@ -2,16 +2,16 @@ package com.example.john.parkingcontrol.API.models.AddCarInc;
 
 public class AddCarIncRequest {
 
-    String guid;
-    String carNumber;
-    String carDriverName;
-    String description;
-    String carDriverContacts;
-    Double gpsLong;
-    Double gpsLat;
-    String incidentAddress;
-    int lawEnactmentId;
-    int documentTypeId;
+    private String guid;
+    private String carNumber;
+    private String carDriverName;
+    private String description;
+    private String carDriverContacts;
+    private Double gpsLong;
+    private Double gpsLat;
+    private String incidentAddress;
+    private int lawEnactmentId;
+    private int documentTypeId;
 
     public String getGuid() {
         return guid;

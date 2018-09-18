@@ -30,7 +30,7 @@ public class CheckingResultActivity extends AppCompatActivity {
     private GetTokenApi service;
     private SharedPreferences sPref;
     private String carNumber, myGuid, myToken, responseCarNumber;
-    private Boolean isEmptyNumber;
+    private Boolean isEmptyNumber = false;
     //private PaymentStatusRequest paymentStatusRequest = new PaymentStatusRequest();
     private String tokenStaticTemporary = "fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik";
 
@@ -87,7 +87,7 @@ public class CheckingResultActivity extends AppCompatActivity {
     public void sendRequest(){
         CheckCarRequest checkCarRequest = new CheckCarRequest();
 
-        loadData(getResources().getString(R.string.sp_field_carNumber));
+        carNumber = getIntent().getExtras().getString("finalCarNumber");
         checkCarRequest.setCarnumber(carNumber);
         checkCarRequest.setToken(tokenStaticTemporary);
         final Call<CheckCarResponse> requestCall = service.getPaymentStatus(checkCarRequest);
@@ -157,9 +157,43 @@ public class CheckingResultActivity extends AppCompatActivity {
 
         });
     }
-    private void loadData(String dataType){
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-        carNumber = sPref.getString(dataType, "");
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+
+        String url = getString(R.string.app_main_url);
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        service = retrofit.create(GetTokenApi.class);
+        final Call<GuidResponse> responseCallGuid = service.getGuid("Bearer "+myToken);
+
+        responseCallGuid.enqueue(new Callback<GuidResponse>() {
+            @Override
+            public void onResponse(Call<GuidResponse> call, Response<GuidResponse> response) {
+                if(response.code()==200){
+
+                    myGuid= response.body().getGuid();
+
+                    //sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                    //SharedPreferences.Editor ed = sPref.edit();
+                    //ed.putString(getResources().getString(R.string.sp_field_guid), myGuid);
+                    //ed.commit();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GuidResponse> call, Throwable t) {
+
+            }
+        });
     }
 
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.

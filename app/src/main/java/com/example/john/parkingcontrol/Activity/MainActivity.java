@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
                             v.setEnabled(false);
                             Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
                             intent.putExtra("guid", myGuid);
+                            intent.putExtra("responseCarNumber", "");
+                            intent.putExtra("isEmptyNumber", false);
                             startActivity(intent);
                             v.setEnabled(true);
             }

@@ -3,6 +3,8 @@ package com.example.john.parkingcontrol.API.models.CheckCar;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 public class CheckCarResponse {
 
     @SerializedName("onParking")
@@ -27,11 +29,11 @@ public class CheckCarResponse {
 
     @SerializedName("parkingStart")
     @Expose
-    private String parkingStart;
+    private Date parkingStart;
 
     @SerializedName("parkingEnd")
     @Expose
-    private String parkingEnd;
+    private Date parkingEnd;
 
     @SerializedName("PrepayHours")
     @Expose
@@ -57,11 +59,11 @@ public class CheckCarResponse {
         return parkigName;
     }
 
-    public String getParkingStart() {
+    public Date getParkingStart() {
         return parkingStart;
     }
 
-    public String getParkingEnd() {
+    public Date getParkingEnd() {
         return parkingEnd;
     }
 

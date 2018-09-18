@@ -29,18 +29,11 @@ public class EnterNumberActivity extends AppCompatActivity {
                 String finalCarNumber = carNumber.getText().toString();
                 String dataType = getResources().getString(R.string.sp_field_carNumber);
 
-                saveData(finalCarNumber, dataType);
-
                 Intent intent = new Intent(v.getContext(), CheckingResultActivity.class);
+                intent.putExtra("finalCarNumber", finalCarNumber);
                 startActivity(intent);
                 v.setEnabled(true);
             }
         });
-    }
-    private void saveData(String finalCarNumber, String dataType){
-        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(dataType, finalCarNumber);
-        ed.commit();
     }
 }
