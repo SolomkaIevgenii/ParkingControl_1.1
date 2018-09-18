@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenRequest;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenResponse;
+import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
 import com.example.john.parkingcontrol.DifferentHelpers.TemporaryDataStorage;
 import com.example.john.parkingcontrol.R;
 
@@ -56,6 +57,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(LoginActivity.this, PrintActivity.class);
                 startActivity(intent);
+                /*Intent intent = new Intent(LoginActivity.this, FillTicketActivity.class);
+                startActivity(intent);*/
             }
         });
 

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -219,9 +220,15 @@ public class PhotoActivity extends AppCompatActivity {
             else if (requestCode == CAMERA_PIC_REQUEST){
                 if (Build.VERSION.SDK_INT > 21) {
 
-                    Glide.with(this).load(mImageFileLocation).into(preView);
-                    //postPath = mImageFileLocation;
-                    bitmap = BitmapFactory.decodeFile(mImageFileLocation);
+                    //Glide.with(this).load(mImageFileLocation).into(preView);
+                    postPath = mImageFileLocation;
+                    File f = new File(postPath);
+                    Bitmap bitmapF = BitmapFactory.decodeFile(f.getAbsolutePath(), null);
+                    Matrix matrix = new Matrix();
+                    bitmapF = Bitmap.createBitmap(bitmapF, 0, 0, bitmapF.getWidth(), bitmapF.getHeight(), matrix, true);
+                    bitmap = Bitmap.createScaledBitmap(bitmapF, 1024, 1980, false);
+                    //TODO Доделать
+                    preView.setImageBitmap(bitmap);
                     buttonUpload.setEnabled(true);
                     buttonTakePhoto.setEnabled(false);
 

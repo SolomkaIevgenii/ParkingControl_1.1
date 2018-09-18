@@ -49,14 +49,13 @@ public class FillTicketActivity extends AppCompatActivity {
                 .build();
         EditText enteredNumber;
         if (!isEmptyNumber){
-            enteredNumber = findViewById(R.id.inputCarNumberInc);
+            enteredNumber = findViewById(R.id.editCarNumberInc);
             enteredNumber.setText(responseCarNumber);
             enteredNumber.setEnabled(false);
             //TODO Задать полям inputType, создать переход в АКТИВИТИ печати чека, сделать запрос чека, поправить везде логотип 18.09.2018
         }
-        else {
-            enteredNumber = findViewById(R.id.inputCarNumberInc);
-            enteredNumber.setText(responseCarNumber);
+        else if (isEmptyNumber){
+            enteredNumber = findViewById(R.id.editCarNumberInc);
         }
 
 

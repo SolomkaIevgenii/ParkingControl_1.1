@@ -49,7 +49,7 @@ public class PrintActivity extends AppCompatActivity {
 
                     // RPP300 is the name of the bluetooth printer device
                     // we got this name from the list of paired devices
-                    if (device.getName().equals("QSPrinter")) {
+                    if (device.getName().equals("QSPrinter")|device.getName().equals("SW_3A6E")) {
                         mmDevice = device;
                         UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
                         mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
@@ -70,7 +70,7 @@ public class PrintActivity extends AppCompatActivity {
                                 "\n" +
                                 "сумма:\t8.00грн.\n\n\n\n\n\n\n\n\n";
 
-                        mmOutputStream.write(msg.getBytes("windows-1251"));
+                        mmOutputStream.write(msg.getBytes("IBM861"));
 
                         Toast.makeText(this, "BT sanded", Toast.LENGTH_SHORT).show();
                         mmOutputStream.close();
