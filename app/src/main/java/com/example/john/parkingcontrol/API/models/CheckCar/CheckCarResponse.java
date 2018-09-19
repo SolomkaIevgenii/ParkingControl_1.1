@@ -29,11 +29,11 @@ public class CheckCarResponse {
 
     @SerializedName("parkingStart")
     @Expose
-    private Date parkingStart;
+    private String parkingStart;
 
     @SerializedName("parkingEnd")
     @Expose
-    private Date parkingEnd;
+    private String parkingEnd;
 
     @SerializedName("PrepayHours")
     @Expose
@@ -59,11 +59,11 @@ public class CheckCarResponse {
         return parkigName;
     }
 
-    public Date getParkingStart() {
+    public String getParkingStart() {
         return parkingStart;
     }
 
-    public Date getParkingEnd() {
+    public String getParkingEnd() {
         return parkingEnd;
     }
 

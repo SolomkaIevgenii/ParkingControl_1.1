@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
 public class AddCarIncResponse {
     @SerializedName("isSuccess")
     @Expose
-    private String isSuccess;
+    private Boolean isSuccess;
 
     @SerializedName("errorMsg")
     @Expose
     private String errorMsg;
 
-    public String getIsSuccess() {
+    public Boolean getIsSuccess() {
         return isSuccess;
     }
 

@@ -7,6 +7,18 @@ public class AbstractPrinter {
         return "";
     }
 
+    public static AbstractPrinter getPrinterByName(String deviceName){
+        if(deviceName.equals(LK_P34.getBluetoothName() ) ) {
+            return new LK_P34();
+        }
+
+        if( deviceName.equals(QSPrinter.getBluetoothName() ) ) {
+            return new QSPrinter();
+        }
+
+        return null;
+    }
+
     public byte[] getDataForPrint(String msg) throws UnsupportedEncodingException {
         return null;
     }

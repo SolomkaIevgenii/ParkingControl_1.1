@@ -29,7 +29,7 @@ public class CheckingResultActivity extends AppCompatActivity {
 
     private GetTokenApi service;
     private SharedPreferences sPref;
-    private String carNumber, myGuid, myToken, responseCarNumber;
+    private String carNumber, myGuid, myToken;
     private Boolean isEmptyNumber = false;
     //private PaymentStatusRequest paymentStatusRequest = new PaymentStatusRequest();
     private String tokenStaticTemporary = "fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik";
@@ -77,7 +77,7 @@ public class CheckingResultActivity extends AppCompatActivity {
         findViewById(R.id.buttonTicketIssue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                badResult();
+                getGuid();
             }
         });
 
@@ -85,12 +85,13 @@ public class CheckingResultActivity extends AppCompatActivity {
     }
 
     public void sendRequest(){
+        //Toast.makeText(CheckingResultActivity.this, "ЗАшел", Toast.LENGTH_SHORT).show();
         CheckCarRequest checkCarRequest = new CheckCarRequest();
 
         carNumber = getIntent().getExtras().getString("finalCarNumber");
         checkCarRequest.setCarnumber(carNumber);
         checkCarRequest.setToken(tokenStaticTemporary);
-        final Call<CheckCarResponse> requestCall = service.getPaymentStatus(checkCarRequest);
+        Call<CheckCarResponse> requestCall = service.getPaymentStatus(checkCarRequest);
         requestCall.enqueue(new Callback<CheckCarResponse>() {
             @Override
             public void onResponse(Call<CheckCarResponse> call, Response<CheckCarResponse> response) {
@@ -98,7 +99,7 @@ public class CheckingResultActivity extends AppCompatActivity {
                 resultView = findViewById(R.id.textCarNResult);
                 hours = findViewById(R.id.textHours);
                 parkName = findViewById(R.id.textParkingName);
-                parkAddress = findViewById(R.id.textParkingAddres);
+                parkAddress = findViewById(R.id.textParkingAddress);
                 startTime = findViewById(R.id.textStartTime);
                 endTime = findViewById(R.id.textEndTime);
                 status = findViewById(R.id.textParkStatus);
@@ -107,7 +108,7 @@ public class CheckingResultActivity extends AppCompatActivity {
                 switch (response.code()) {
                     case 200:
 
-                        if (!response.body().getOnParking()) {
+                        if (!response.body().getOnParking()&carNumber.length()>1) {
                             findViewById(R.id.buttonRefresh).setVisibility(View.GONE);
                             findViewById(R.id.buttonOK).setVisibility(View.GONE);
                             findViewById(R.id.buttonTicketIssue).setVisibility(View.VISIBLE);
@@ -118,7 +119,6 @@ public class CheckingResultActivity extends AppCompatActivity {
                             startTime.setVisibility(View.GONE);
                             endTime.setVisibility(View.GONE);
                             status.setVisibility(View.GONE);
-                            responseCarNumber = response.body().getCarNumber();
                             break;
                         }else if(response.body().getMessage().toString().equalsIgnoreCase("Пустий номер авто!")){
 
@@ -152,47 +152,10 @@ public class CheckingResultActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<CheckCarResponse> call, Throwable t) {
+                Toast.makeText(CheckingResultActivity.this, "ЗАшел2 "+t, Toast.LENGTH_SHORT).show();
 
             }
 
-        });
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
-
-        String url = getString(R.string.app_main_url);
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        service = retrofit.create(GetTokenApi.class);
-        final Call<GuidResponse> responseCallGuid = service.getGuid("Bearer "+myToken);
-
-        responseCallGuid.enqueue(new Callback<GuidResponse>() {
-            @Override
-            public void onResponse(Call<GuidResponse> call, Response<GuidResponse> response) {
-                if(response.code()==200){
-
-                    myGuid= response.body().getGuid();
-
-                    //sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-                    //SharedPreferences.Editor ed = sPref.edit();
-                    //ed.putString(getResources().getString(R.string.sp_field_guid), myGuid);
-                    //ed.commit();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GuidResponse> call, Throwable t) {
-
-            }
         });
     }
 
@@ -213,17 +176,13 @@ public class CheckingResultActivity extends AppCompatActivity {
     }
     private void badResult(){
         isEmptyNumber=false;
-        getGuid();
         Intent intent = new Intent(CheckingResultActivity.this, PhotoActivity.class);
         intent.putExtra("guid", myGuid);
         intent.putExtra("isEmptyNumber", isEmptyNumber);
-        intent.putExtra("responseCarNumber", responseCarNumber);
+        intent.putExtra("responseCarNumber", carNumber.toUpperCase());
         startActivity(intent);
     }
     private void getGuid(){
-
-        super.onResume();
-        findViewById(R.id.buttonCheck).setEnabled(true);
 
         sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
@@ -242,12 +201,8 @@ public class CheckingResultActivity extends AppCompatActivity {
             public void onResponse(Call<GuidResponse> call, Response<GuidResponse> response) {
                 if(response.code()==200){
 
-                    myGuid= response.body().getGuid();
-
-                    //sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-                    //SharedPreferences.Editor ed = sPref.edit();
-                    //ed.putString(getResources().getString(R.string.sp_field_guid), myGuid);
-                    //ed.commit();
+                    myGuid= response.body().getGuid().toString();
+                    badResult();
                 }
             }
 
@@ -258,59 +213,3 @@ public class CheckingResultActivity extends AppCompatActivity {
         });
     }
 }
-
-
-
-
-
-        /*
-        resultView = findViewById(R.id.textViewResult);
-
-        myAsyncTask = new MyAsyncTask(resultView);
-        myAsyncTask.execute("http://parking.2click.money/ExtApi/carState?id="+getIntent().getStringExtra(enteredCarNumber)+"&accToken=fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik");
-
-        Toast.makeText(this, getIntent().getStringExtra(enteredCarNumber), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        myAsyncTask.cancel(true);
-    }
-
-    public static class MyAsyncTask extends AsyncTask<String, Integer, String>{
-
-        private TextView resultView;
-
-        public MyAsyncTask(TextView resultView){
-            this.resultView = resultView;
-        }
-
-        @Override
-        protected String doInBackground(String... urls) {
-            try {
-                return new HttpClient().request(urls[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            resultView.setText("Loading..."+values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            if(s==null){
-                Toast.makeText(resultView.getContext(), "Error", Toast.LENGTH_SHORT).show();
-            }else {
-                resultView.setText(s);
-            }
-        }
-        */

@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
 import com.example.john.parkingcontrol.Activity.CheckCar.CheckPaymentActivity;
+import com.example.john.parkingcontrol.Activity.CheckCar.EnterNumberActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
 import com.example.john.parkingcontrol.R;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 v.setEnabled(false);
-                Intent intent = new Intent(v.getContext(), CheckPaymentActivity.class);
+                Intent intent = new Intent(v.getContext(), EnterNumberActivity.class);
                 startActivity(intent);
                 v.setEnabled(true);
             }

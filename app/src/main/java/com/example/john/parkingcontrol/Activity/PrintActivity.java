@@ -6,9 +6,14 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
+import com.example.john.parkingcontrol.Activity.CheckCar.CheckingResultActivity;
+import com.example.john.parkingcontrol.Activity.PrinterDrivers.AbstractPrinter;
+import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
 import com.example.john.parkingcontrol.R;
+import com.google.gson.annotations.Expose;
 
 import java.io.OutputStream;
 import java.text.DateFormat;
@@ -19,22 +24,63 @@ import java.util.UUID;
 
 public class PrintActivity extends AppCompatActivity {
 
-    BluetoothAdapter mBluetoothAdapter;
-    BluetoothSocket mmSocket;
-    BluetoothDevice mmDevice;
-    OutputStream mmOutputStream;
-    String msg;
+    static final UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    static final DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print);
 
+        findViewById(R.id.buttonPrintMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setEnabled(false);
+                int res = sendToPrint();
+                v.setEnabled(true);
+                Toast.makeText(PrintActivity.this, "Напечатано "+res, Toast.LENGTH_SHORT).show();
+                //onBackPressed();
+                }
+        });
+        findViewById(R.id.buttonClosePrinter).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PrintActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
+    private int sendToPrint(){
+        int res = 0;
+        BluetoothAdapter mBluetoothAdapter=null;
+        BluetoothSocket mmSocket=null;
+        OutputStream mmOutputStream=null;
+        AbstractPrinter dev = null;
+        String currentDate = dateFormat.format(Calendar.getInstance().getTime());
+        String msg = "Билет на автобус\n" +
+                "\n" +
+                "дата:\t"+currentDate+"\n" +
+                "время:\t18:30\n" +
+                "Чек:\t13245679879\n" +
+                "серия:\tФФ1325ББ\n" +
+                "\n" +
+                "сумма:\t8.00грн.\n\n\n\n\n\n\n\n\n";
+
+
+
         try {
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
             if(mBluetoothAdapter == null) {
-                Toast.makeText(this, "NoBTadapter", Toast.LENGTH_LONG).show();
+
+                return 0;
             }
 
             if(!mBluetoothAdapter.isEnabled()) {
@@ -46,50 +92,51 @@ public class PrintActivity extends AppCompatActivity {
 
             if(pairedDevices.size() > 0) {
                 for (BluetoothDevice device : pairedDevices) {
+                    try{
 
-                    // RPP300 is the name of the bluetooth printer device
-                    // we got this name from the list of paired devices
-                    if (device.getName().equals("QSPrinter")|device.getName().equals("SW_3A6E")) {
-                        mmDevice = device;
-                        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-                        mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-                        mmSocket.connect();
-                        mmOutputStream = mmSocket.getOutputStream();
+                        dev = AbstractPrinter.getPrinterByName(device.getName());
 
-                        Toast.makeText(this, "Bluetooth Opened", Toast.LENGTH_SHORT).show();
 
-                        DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-                        final String currentDate = dateFormat.format(Calendar.getInstance().getTime());
+                        if (dev!=null) {
 
-                        msg = "Билет на автобус\n" +
-                                "\n" +
-                                "дата:\t"+currentDate+"\n" +
-                                "время:\t18:30\n" +
-                                "Чек:\t13245679879\n" +
-                                "серия:\tФФ1325ББ\n" +
-                                "\n" +
-                                "сумма:\t8.00грн.\n\n\n\n\n\n\n\n\n";
 
-                        mmOutputStream.write(msg.getBytes("IBM861"));
+                            mmSocket = device.createRfcommSocketToServiceRecord(uuid);
+                            mmSocket.connect();
+                            mmOutputStream = mmSocket.getOutputStream();
 
-                        Toast.makeText(this, "BT sanded", Toast.LENGTH_SHORT).show();
-                        mmOutputStream.close();
+
+
+                            mmOutputStream.write(dev.getDataForPrint(msg));
+                            res++;
+
+
+
+                        }
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }finally{
+                        if (mmOutputStream!=null) {
+                            mmOutputStream.close();
+                        }
+
+//                        if (mmSocket.isConnected()){
                         mmSocket.close();
+//                        }
 
-                    }
-                    else{
-                        Toast.makeText(this, "Принтер не знайдено, переконайтесь що він увімнений, та підключений", Toast.LENGTH_LONG).show();
-                        onBackPressed();
-                        finish();
-                        break;
+                        mmOutputStream=null;
+                        mmSocket=null;
+                        dev=null;
                     }
                 }
             }
 
-            Toast.makeText(this, "Bluetooth device found.", Toast.LENGTH_LONG).show();;
+//            Toast.makeText(this, "Bluetooth device found.", Toast.LENGTH_LONG).show();;
 
         }catch(Exception e){
             e.printStackTrace();
         }
+
+        return res;
     }
 }

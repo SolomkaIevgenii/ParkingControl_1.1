@@ -15,7 +15,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -73,6 +72,8 @@ public class PhotoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
+
+        //Toast.makeText(this, "111 "+myGuid, Toast.LENGTH_SHORT).show();
 
         responseCarNumber = getIntent().getExtras().getString("responseCarNumber");
         isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
@@ -141,6 +142,7 @@ public class PhotoActivity extends AppCompatActivity {
                                 intent.putExtra("responseCarNumber", responseCarNumber);
                                 startActivity(intent);
                                 v.setEnabled(true);
+                                finish();
                             }else if (response.code()==401){
                                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                                         builder.setTitle("Помилка");
@@ -211,7 +213,7 @@ public class PhotoActivity extends AppCompatActivity {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(90);
                     bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1980, false);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 900, 1200, false);
                     preView.setImageBitmap(bitmap);
                     preView.setVisibility(View.VISIBLE);
                     buttonChoose.setEnabled(false);
@@ -234,7 +236,7 @@ public class PhotoActivity extends AppCompatActivity {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(90);
                     bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1980, false);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 900, 1200, false);
                     preView.setImageBitmap(bitmap);
                     buttonUpload.setEnabled(true);
                     buttonTakePhoto.setEnabled(false);
@@ -249,7 +251,7 @@ public class PhotoActivity extends AppCompatActivity {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(90);
                     bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1980, false);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 900, 1200, false);
                     buttonUpload.setEnabled(true);
                     buttonTakePhoto.setEnabled(false);
 
@@ -270,7 +272,7 @@ public class PhotoActivity extends AppCompatActivity {
     private String imageToString(){
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG,50,byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imgByte,Base64.DEFAULT);
     }

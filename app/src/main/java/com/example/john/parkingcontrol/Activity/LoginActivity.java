@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
                 /*Intent intent = new Intent(LoginActivity.this, FillTicketActivity.class);
                 startActivity(intent);*/
+                Toast.makeText(LoginActivity.this, "From Login to Print", Toast.LENGTH_SHORT).show();
             }
         });
 
