@@ -1,5 +1,6 @@
 package com.example.john.parkingcontrol.Activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenRequest;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenResponse;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
+import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
 import com.example.john.parkingcontrol.DifferentHelpers.TemporaryDataStorage;
 import com.example.john.parkingcontrol.R;
 
@@ -36,12 +38,16 @@ public class LoginActivity extends AppCompatActivity {
     private TextWatcher textWatcher;
     private EditText enteredLogin;
     private EditText enteredPassword;
+    private ProgressDialog pDialog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+//        initDialog();
+        final PrDialog prDialog = new PrDialog();
+        prDialog.initDialog(getString(R.string.app_text_loading), this);
 
         enteredLogin = findViewById(R.id.editTextLogin);
 
@@ -107,6 +113,8 @@ public class LoginActivity extends AppCompatActivity {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                //showDialog();
+                prDialog.showDialog();
                 v.setEnabled(false);
 
                 TokenRequest tokenRequest = new TokenRequest();
@@ -128,20 +136,18 @@ public class LoginActivity extends AppCompatActivity {
                 tokenRequestCall.enqueue(new Callback<TokenResponse>() {
                     @Override
                     public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                        prDialog.hideDialog();
                         v.setEnabled(true);
 
                         int statusCode = response.code();
                         switch (statusCode){
                             case 200:
-
-
                                 try {
                                     myToken = response.body().getAccess_token();
                                     myName = response.body().getLogin();
                                 }catch (NullPointerException e){
                                     Toast.makeText(LoginActivity.this, "Помилка доступу: "+e, Toast.LENGTH_SHORT).show();
                                 }
-
                                 sPrefToken = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
                                 SharedPreferences.Editor ed = sPrefToken.edit();
                                 ed.putString(getResources().getString(R.string.sp_field_token), myToken);
@@ -159,7 +165,6 @@ public class LoginActivity extends AppCompatActivity {
                                 break;
 
                             case 400:
-
                                 Toast.makeText(LoginActivity.this, "Login or/and password is incorrect"+response.code(), Toast.LENGTH_LONG).show();
                                 break;
 
@@ -171,6 +176,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<TokenResponse> call, Throwable t) {
+                        prDialog.hideDialog();
                         v.setEnabled(true);
 
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.app_an_internet_error), Toast.LENGTH_SHORT).show();
@@ -196,6 +202,24 @@ public class LoginActivity extends AppCompatActivity {
         else { Toast.makeText(this, "Натисніть повторно для ВИХОДУ", Toast.LENGTH_LONG).show(); }
 
         mBackPressed = System.currentTimeMillis();
+    }
+
+    protected void initDialog() {
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Завантаження...");
+        pDialog.setCancelable(true);
+    }
+
+
+    protected void showDialog() {
+
+        if (!pDialog.isShowing()) pDialog.show();
+    }
+
+    protected void hideDialog() {
+
+        if (pDialog.isShowing()) pDialog.dismiss();
     }
 
 }

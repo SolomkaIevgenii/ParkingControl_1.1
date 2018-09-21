@@ -15,9 +15,21 @@ import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarRequest;
 import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarResponse;
 import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
+import com.example.john.parkingcontrol.Activity.LoginActivity;
 import com.example.john.parkingcontrol.Activity.PrintActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
+import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
 import com.example.john.parkingcontrol.R;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,12 +48,17 @@ public class CheckingResultActivity extends AppCompatActivity {
 
     private TextView resultView, status, hours, startTime, endTime, parkName, parkAddress;
     //private MyAsyncTask myAsyncTask;
+    private PrDialog prDialog = new PrDialog();
+    private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yy"+" о "+"HH:mm");
+    private Date starTtime, endTtime = null;
+    private Calendar calendarStart, calendarEnd;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checking_result);
+        prDialog.initDialog(getString(R.string.app_text_loading), this);
         myGuid = getIntent().getExtras().getString("guid");
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -77,6 +94,7 @@ public class CheckingResultActivity extends AppCompatActivity {
         findViewById(R.id.buttonTicketIssue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setEnabled(false);
                 getGuid();
             }
         });
@@ -85,6 +103,7 @@ public class CheckingResultActivity extends AppCompatActivity {
     }
 
     public void sendRequest(){
+        prDialog.showDialog();
         //Toast.makeText(CheckingResultActivity.this, "ЗАшел", Toast.LENGTH_SHORT).show();
         CheckCarRequest checkCarRequest = new CheckCarRequest();
 
@@ -95,6 +114,7 @@ public class CheckingResultActivity extends AppCompatActivity {
         requestCall.enqueue(new Callback<CheckCarResponse>() {
             @Override
             public void onResponse(Call<CheckCarResponse> call, Response<CheckCarResponse> response) {
+                prDialog.hideDialog();
 
                 resultView = findViewById(R.id.textCarNResult);
                 hours = findViewById(R.id.textHours);
@@ -129,17 +149,48 @@ public class CheckingResultActivity extends AppCompatActivity {
                             break;
 
                         }else{
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                            Date dStart = null;
+                            Date dEnd = null;
+                            try {
+                                dStart = sdf.parse(response.body().getParkingStart());
+                                dEnd = sdf.parse(response.body().getParkingStart());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            String formattedTimeStart = dateFormat.format(dStart);
+                            String formattedTimeEnd = dateFormat.format(dEnd);
+
                             status.setText("Авто на парковці");
                             resultView.setText("Авто "+response.body().getCarNumber().toString());
                             hours.setText("Сплачено за: "+response.body().getPrepayHours()+" г.");
                             parkName.setText(response.body().getParkigName());
                             parkAddress.setText(response.body().getAddress());
-                            startTime.setText("Заїхав: "+response.body().getParkingStart());
-                            endTime.setText("Сплачено до: "+response.body().getParkingEnd());
+                            startTime.setText("Заїхав: "+formattedTimeStart);
+                            endTime.setText("Сплачено до: "+formattedTimeEnd);
                             findViewById(R.id.buttonRefresh).setVisibility(View.VISIBLE);
                             findViewById(R.id.buttonOK).setVisibility(View.VISIBLE);
                             break;
                         }
+
+                    case 401:
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CheckingResultActivity.this);
+                        builder.setTitle("Помилка");
+                        builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
+                                "Вас буде перенаправлено на сторінку авторизації");
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(CheckingResultActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                CheckingResultActivity.this.finish();
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        android.app.AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
 
                     default:
                         Toast.makeText(CheckingResultActivity.this, getResources().getString(R.string.app_an_error) + " " + response.code(), Toast.LENGTH_SHORT).show();
@@ -152,6 +203,7 @@ public class CheckingResultActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<CheckCarResponse> call, Throwable t) {
+                prDialog.hideDialog();
                 Toast.makeText(CheckingResultActivity.this, "ЗАшел2 "+t, Toast.LENGTH_SHORT).show();
 
             }
@@ -159,21 +211,21 @@ public class CheckingResultActivity extends AppCompatActivity {
         });
     }
 
-    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
-    private long mBackPressed;
-
-    @Override
-    public void onBackPressed()
-    {
-        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
-        {
-            super.onBackPressed();
-            return;
-        }
-        else { Toast.makeText(getBaseContext(), "Натиснить 'назад' повторно щоб повернутися в пропередне меню.", Toast.LENGTH_SHORT).show(); }
-
-        mBackPressed = System.currentTimeMillis();
-    }
+//    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+//    private long mBackPressed;
+//
+//    @Override
+//    public void onBackPressed()
+//    {
+//        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
+//        {
+//            super.onBackPressed();
+//            return;
+//        }
+//        else { Toast.makeText(getBaseContext(), "Натиснить 'назад' повторно щоб повернутися в пропередне меню.", Toast.LENGTH_SHORT).show(); }
+//
+//        mBackPressed = System.currentTimeMillis();
+//    }
     private void badResult(){
         isEmptyNumber=false;
         Intent intent = new Intent(CheckingResultActivity.this, PhotoActivity.class);
@@ -181,6 +233,7 @@ public class CheckingResultActivity extends AppCompatActivity {
         intent.putExtra("isEmptyNumber", isEmptyNumber);
         intent.putExtra("responseCarNumber", carNumber.toUpperCase());
         startActivity(intent);
+        findViewById(R.id.buttonTicketIssue).setEnabled(true);
     }
     private void getGuid(){
 

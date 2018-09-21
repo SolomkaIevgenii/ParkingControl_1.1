@@ -32,6 +32,7 @@ import com.example.john.parkingcontrol.Activity.LoginActivity;
 import com.example.john.parkingcontrol.Activity.MainActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
 import com.example.john.parkingcontrol.BuildConfig;
+import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
 import com.example.john.parkingcontrol.R;
 
 import java.io.ByteArrayOutputStream;
@@ -67,11 +68,14 @@ public class PhotoActivity extends AppCompatActivity {
     public static final String IMAGE_DIRECTORY_NAME = "Android File Upload";
     public static final int IMG_REQUEST = 777;
     private static final int CAMERA_PIC_REQUEST = 1111;
+    private PrDialog prDialog = new PrDialog();
+    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
+        prDialog.initDialog(getString(R.string.app_text_loading), this);
 
         //Toast.makeText(this, "111 "+myGuid, Toast.LENGTH_SHORT).show();
 
@@ -114,85 +118,6 @@ public class PhotoActivity extends AppCompatActivity {
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(intent, IMG_REQUEST);
 
-            }
-        });
-
-
-        buttonUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                v.setEnabled(false);
-                //final String file = imageToString();
-                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-                myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
-
-                service = retrofit.create(GetTokenApi.class);
-
-                Call<UploadResponse> uploadResponseCall = service.uploadPhoto(myGuid, file);
-                uploadResponseCall.enqueue(new Callback<UploadResponse>() {
-                    @Override
-                    public void onResponse(Call<UploadResponse> call, Response<UploadResponse> response) {
-                        if (response.code()==200) {
-                            if (response.body().getIsSuccess()) {
-                                TextView textView = findViewById(R.id.textView7);
-                                textView.setText(response.toString());
-                                Intent intent = new Intent(PhotoActivity.this, FillTicketActivity.class);
-                                intent.putExtra("guid", myGuid);
-                                intent.putExtra("isEmptyNumber", isEmptyNumber);
-                                intent.putExtra("responseCarNumber", responseCarNumber);
-                                startActivity(intent);
-                                v.setEnabled(true);
-                                finish();
-                            }else if (response.code()==401){
-                                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
-                                        builder.setTitle("Помилка");
-                                        builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
-                                                "Вас буде перенаправлено на сторінку авторизації");
-                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
-                                        startActivity(intent);
-                                        PhotoActivity.this.finish();
-                                        dialog.dismiss();
-                                        }
-                                    });
-                                    builder.setCancelable(false);
-                                    android.app.AlertDialog alertDialog = builder.create();
-                                    alertDialog.show();
-                                    v.setEnabled(true);
-
-                            }
-                            else{
-                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
-                                builder.setTitle("Помилка");
-                                builder.setMessage("Помилка, зверніться до адміністратора.");
-                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(PhotoActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        PhotoActivity.this.finish();
-                                        dialog.dismiss();
-                                    }
-                                });
-                                builder.setCancelable(false);
-                                android.app.AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
-                                v.setEnabled(true);
-
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<UploadResponse> call, Throwable t) {
-                        Toast.makeText(PhotoActivity.this, "Помилка зв'язку, перевірте інтернет з'єднання", Toast.LENGTH_SHORT).show();
-
-                        v.setEnabled(true);
-
-                    }
-                });
             }
         });
     }
@@ -243,6 +168,8 @@ public class PhotoActivity extends AppCompatActivity {
 
                     file = imageToString();
 
+                    uploadImage();
+
                 }else{
                     //Glide.with(this).load(fileUri).into(preView);
                     postPath = mImageFileLocation;
@@ -256,6 +183,8 @@ public class PhotoActivity extends AppCompatActivity {
                     buttonTakePhoto.setEnabled(false);
 
                     file = imageToString();
+
+                    uploadImage();
 
                 }
 
@@ -320,6 +249,80 @@ public class PhotoActivity extends AppCompatActivity {
         }
 
 
+    }
+    private void uploadImage(){
+                prDialog.showDialog();
+                //final String file = imageToString();
+                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+
+                service = retrofit.create(GetTokenApi.class);
+
+                Call<UploadResponse> uploadResponseCall = service.uploadPhoto(myGuid, file);
+                uploadResponseCall.enqueue(new Callback<UploadResponse>() {
+                    @Override
+                    public void onResponse(Call<UploadResponse> call, Response<UploadResponse> response) {
+                        prDialog.hideDialog();
+                        if (response.code()==200) {
+                            if (response.body().getIsSuccess()) {
+                                i++;
+                                TextView textView = findViewById(R.id.textView7);
+                                textView.setText(response.toString());
+
+                                    if (i==4) {
+                                        Intent intent = new Intent(PhotoActivity.this, FillTicketActivity.class);
+                                        intent.putExtra("guid", myGuid);
+                                        intent.putExtra("isEmptyNumber", isEmptyNumber);
+                                        intent.putExtra("responseCarNumber", responseCarNumber);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                            }else if (response.code()==401){
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
+                                builder.setTitle("Помилка");
+                                builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
+                                        "Вас буде перенаправлено на сторінку авторизації");
+                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        PhotoActivity.this.finish();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.setCancelable(false);
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+
+                            }
+                            else{
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
+                                builder.setTitle("Помилка");
+                                builder.setMessage("Помилка, зверніться до адміністратора.");
+                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(PhotoActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        PhotoActivity.this.finish();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.setCancelable(false);
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UploadResponse> call, Throwable t) {
+                        prDialog.hideDialog();
+                        Toast.makeText(PhotoActivity.this, "Помилка зв'язку, перевірте інтернет з'єднання", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     public Uri getOutputMediaFileUri(int type) {

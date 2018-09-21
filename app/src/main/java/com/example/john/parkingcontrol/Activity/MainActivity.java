@@ -1,5 +1,6 @@
 package com.example.john.parkingcontrol.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
                             intent.putExtra("guid", myGuid);
                             intent.putExtra("responseCarNumber", "");
-                            intent.putExtra("isEmptyNumber", false);
+                            intent.putExtra("isEmptyNumber", true);
                             startActivity(intent);
                             v.setEnabled(true);
             }
@@ -102,6 +103,39 @@ public class MainActivity extends AppCompatActivity {
                     //SharedPreferences.Editor ed = sPref.edit();
                     //ed.putString(getResources().getString(R.string.sp_field_guid), myGuid);
                     //ed.commit();
+                }else if (response.code()==401){
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Помилка");
+                    builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
+                            "Вас буде перенаправлено на сторінку авторизації");
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            MainActivity.this.finish();
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setCancelable(false);
+                    android.app.AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }else{
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Помилка");
+                    builder.setMessage("Помилка ана сервері, зверніться до адміністратора");
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            MainActivity.this.finish();
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setCancelable(false);
+                    android.app.AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                 }
             }
 

@@ -5,4 +5,5 @@
     <string name="app_text_save_password">Зберегти пароль</string>
     <string name="app_text_miss_password">Невірний логін або пароль</string>
     <string name="app_text_enter">Увійти</string>
+    <string name="app_text_loading">Завантаження...</string>
 </resources>

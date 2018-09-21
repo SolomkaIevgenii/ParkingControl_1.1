@@ -13,6 +13,7 @@ import android.widget.EditText;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncRequest;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncResponse;
+import com.example.john.parkingcontrol.Activity.LoginActivity;
 import com.example.john.parkingcontrol.Activity.PrintActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
 import com.example.john.parkingcontrol.R;
@@ -57,6 +58,7 @@ public class FillTicketActivity extends AppCompatActivity {
         }
         else if (isEmptyNumber){
             responseCarNumber = "";
+            finalCarNumber.setEnabled(true);
         }
         finalCarNumber.setText(responseCarNumber);
 
@@ -119,6 +121,43 @@ public class FillTicketActivity extends AppCompatActivity {
                                         intent.putExtra("guid", myGuid);
                                         startActivity(intent);
                                         finish();
+                                    }
+                                });
+                                builder.setCancelable(false);
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                                v.setEnabled(true);
+                            }else if (response.code()==401){
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(FillTicketActivity.this);
+                                builder.setTitle("Помилка");
+                                builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
+                                        "Вас буде перенаправлено на сторінку авторизації");
+                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(FillTicketActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        FillTicketActivity.this.finish();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.setCancelable(false);
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                                v.setEnabled(true);
+
+                            }
+                            else{
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(FillTicketActivity.this);
+                                builder.setTitle("Помилка");
+                                builder.setMessage("Помилка ана сервері, зверніться до адміністратора");
+                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(FillTicketActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        FillTicketActivity.this.finish();
+                                        dialog.dismiss();
                                     }
                                 });
                                 builder.setCancelable(false);

@@ -26,11 +26,19 @@ public class PrintActivity extends AppCompatActivity {
 
     static final UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
     static final DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+    BluetoothAdapter mBluetoothAdapter=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print);
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if(!mBluetoothAdapter.isEnabled()) {
+            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetooth, 0);
+        }
 
         findViewById(R.id.buttonPrintMe).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +67,7 @@ public class PrintActivity extends AppCompatActivity {
 
     private int sendToPrint(){
         int res = 0;
-        BluetoothAdapter mBluetoothAdapter=null;
+        mBluetoothAdapter=null;
         BluetoothSocket mmSocket=null;
         OutputStream mmOutputStream=null;
         AbstractPrinter dev = null;
@@ -81,11 +89,6 @@ public class PrintActivity extends AppCompatActivity {
             if(mBluetoothAdapter == null) {
 
                 return 0;
-            }
-
-            if(!mBluetoothAdapter.isEnabled()) {
-                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBluetooth, 0);
             }
 
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();

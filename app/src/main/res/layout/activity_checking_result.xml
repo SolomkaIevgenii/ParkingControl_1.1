@@ -7,6 +7,7 @@
     android:background="@color/colorBackgroundGeneral"
     tools:context=".Activity.CheckCar.CheckingResultActivity">
 
+
     <ImageView
         android:id="@+id/imageHelperMain_1"
         android:layout_width="0dp"
@@ -47,7 +48,7 @@
         android:layout_marginBottom="70dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:background="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,6 +63,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="Завантаження..."
+            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -77,6 +79,7 @@
             android:layout_marginTop="8dp"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -89,6 +92,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:textSize="18sp"
+            android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textParkStatus" />
@@ -101,6 +105,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textSize="18sp"
+            android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textParkingName" />
@@ -113,9 +118,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textSize="18sp"
+            android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textParkingAddres" />
+            app:layout_constraintTop_toBottomOf="@+id/textParkingAddress" />
 
         <TextView
             android:id="@+id/textEndTime"
@@ -125,6 +131,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:textSize="18sp"
+            android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textStartTime" />
@@ -138,6 +145,7 @@
             android:layout_marginTop="8dp"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textCarNResult" />
@@ -145,11 +153,13 @@
 
     <Button
         android:id="@+id/buttonOK"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/button_login_pres_norm"
         android:text="ок"
+        android:textColor="@color/colorWhite"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -158,11 +168,13 @@
 
     <Button
         android:id="@+id/buttonRefresh"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
+        android:background="@drawable/button_login_pres_norm"
         android:text="Оновити"
+        android:textColor="@color/colorWhite"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonOK"
@@ -176,6 +188,8 @@
         android:layout_marginBottom="8dp"
         android:text="виписати повідомлення"
         android:visibility="gone"
+        android:background="@drawable/button_login_pres_norm"
+        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
