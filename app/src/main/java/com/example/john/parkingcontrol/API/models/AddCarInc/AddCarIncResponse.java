@@ -12,6 +12,28 @@ public class AddCarIncResponse {
     @Expose
     private String errorMsg;
 
+    @SerializedName("detailErrorMsg")
+    @Expose
+    private String detailErrorMsg;
+
+    @SerializedName("document_number")
+    @Expose
+    private String document_number;
+
+    @SerializedName("document_author")
+    @Expose
+    private String document_author;
+
+    @SerializedName("document_date")
+    @Expose
+    private String document_date;
+
+    public String getDocument_number() {return document_number;}
+
+    public String getDocument_author() {return document_author;}
+
+    public String getDocument_date() {return document_date;}
+
     public Boolean getIsSuccess() {
         return isSuccess;
     }
@@ -23,8 +45,4 @@ public class AddCarIncResponse {
     public String getDetailErrorMsg() {
         return detailErrorMsg;
     }
-
-    @SerializedName("detailErrorMsg")
-    @Expose
-    private String detailErrorMsg;
 }

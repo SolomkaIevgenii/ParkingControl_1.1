@@ -82,6 +82,7 @@ public class FillTicketActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                final String carNumber=finalCarNumber.getText().toString();
                 v.setEnabled(false);
                 gpsLong = 0.0d;
                 gpsLat = 0.0d;
@@ -110,22 +111,14 @@ public class FillTicketActivity extends AppCompatActivity {
                     public void onResponse(Call<AddCarIncResponse> call, Response<AddCarIncResponse> response) {
                         if (response.code()==200) {
                             if (response.body().getIsSuccess()) {
-
-                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(FillTicketActivity.this);
-                                builder.setTitle("Результат");
-                                builder.setMessage("Постанову сформовано та завантажено на сервер");
-                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(FillTicketActivity.this, PrintActivity.class);
-                                        intent.putExtra("guid", myGuid);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                });
-                                builder.setCancelable(false);
-                                android.app.AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
+                                Intent intent = new Intent(FillTicketActivity.this, PrintActivity.class);
+                                intent.putExtra("guid", myGuid);
+                                intent.putExtra("document_number", response.body().getDocument_number());
+                                intent.putExtra("document_author", response.body().getDocument_author());
+                                intent.putExtra("document_date", response.body().getDocument_date());
+                                intent.putExtra("car_number", carNumber);
+                                startActivity(intent);
+                                finish();
                                 v.setEnabled(true);
                             }else if (response.code()==401){
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(FillTicketActivity.this);

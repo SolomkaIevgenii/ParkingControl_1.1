@@ -2,17 +2,17 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@mipmap/ic_button_check_pres"
+        android:drawable="@mipmap/ic_button_fill_ticket_pres"
         android:state_pressed="true"/>
     <item
-        android:drawable="@mipmap/ic_button_check_pres"
+        android:drawable="@mipmap/ic_button_fill_ticket_pres"
         android:state_focused="true"
         />
     <item
-        android:drawable="@mipmap/ic_button_check_enabled"
+        android:drawable="@mipmap/ic_button_fill_ticket_enabled"
         android:state_enabled="false"
         />
 
-    <item android:drawable="@mipmap/ic_button_check_normal"/>
+    <item android:drawable="@mipmap/ic_button_fill_ticket_normal"/>
 
 </selector>

@@ -56,5 +56,5 @@ public interface GetTokenApi {
 
     @FormUrlEncoded
     @POST("api/incident_upload_file")
-    Call<UploadResponse> uploadPhoto(@Field("Guid") String guid, @Field("Base64StringContent") String file, @Field("PhotoPerspectiveCode")Integer photoPerspectiveCode);
+    Call<UploadResponse> uploadPhoto(@Field("Guid") String guid, @Field("Base64StringContent") String file, @Field("PhotoPerspectiveCode")int photoPerspectiveCode);
 }

@@ -57,18 +57,18 @@ public class LoginActivity extends AppCompatActivity {
 
         ImageView imageView = findViewById(R.id.imageLogoMain);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(LoginActivity.this, PrintActivity.class);
-                intent.putExtra("guid", "a0d1a342-7e59-4756-ab13-1e3334cfe508");
-                startActivity(intent);
-                /*Intent intent = new Intent(LoginActivity.this, FillTicketActivity.class);
-                startActivity(intent);*/
-                Toast.makeText(LoginActivity.this, "From Login to Print", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Intent intent = new Intent(LoginActivity.this, PrintActivity.class);
+//                intent.putExtra("guid", "a0d1a342-7e59-4756-ab13-1e3334cfe508");
+//                startActivity(intent);
+//                /*Intent intent = new Intent(LoginActivity.this, FillTicketActivity.class);
+//                startActivity(intent);*/
+//                Toast.makeText(LoginActivity.this, "From Login to Print", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         final TextView loginEntered = findViewById(R.id.editTextLogin);
         final TextView passwordEntered = findViewById(R.id.editTextPassword);

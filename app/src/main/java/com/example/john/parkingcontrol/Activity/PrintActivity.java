@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
@@ -22,8 +23,10 @@ import com.google.gson.annotations.Expose;
 
 import java.io.OutputStream;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,16 +39,49 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class PrintActivity extends AppCompatActivity {
 
     static final UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    static final DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
     private BluetoothAdapter mBluetoothAdapter=null;
-    private String msg, msgResponse, myGuid;
+    private String msg, msgResponse, myGuid, document_number, document_author, document_date,car_number;
     private GetTokenApi service;
+    private TextView documentNumber, documentAuthor, documentDate, carNumber;
+    private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yy"+" час "+"HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print);
         myGuid = getIntent().getExtras().getString("guid");
+        document_number = getIntent().getExtras().getString("document_number");
+        document_author = getIntent().getExtras().getString("document_author");
+        document_date = getIntent().getExtras().getString("document_date");
+        car_number = getIntent().getExtras().getString("car_number");
+
+        msg = "останова\n" +
+                "\n" +
+                "дата:\t"+"\n" +
+                "время:\t18:30\n" +
+                "Чек:\t13245679879\n" +
+                "серия:\tФФ1325ББ\n" +
+                "\n" +
+                "сумма:\t8.00грн.\n\n\n\n\n\n\n\n\n";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date dStart = null;
+        try {
+            dStart = sdf.parse(document_date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String formattedDocumentDate = dateFormat.format(dStart);
+
+        documentDate = findViewById(R.id.textViewDocumentDate);
+        documentAuthor = findViewById(R.id.textViewInspectorName);
+        documentNumber = findViewById(R.id.textViewDocumentNumber);
+        carNumber = findViewById(R.id.textViewDocumentCarNumber);
+
+        documentDate.setText(formattedDocumentDate);
+        documentAuthor.setText(document_author);
+        documentNumber.setText(document_number);
+        carNumber.setText(car_number);
 
         String url = getString(R.string.app_main_url);
         final Retrofit retrofit = new Retrofit.Builder()
@@ -54,6 +90,7 @@ public class PrintActivity extends AppCompatActivity {
                 .build();
         service = retrofit.create(GetTokenApi.class);
 
+        msg=getReceiptText();
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -68,7 +105,7 @@ public class PrintActivity extends AppCompatActivity {
                 v.setEnabled(false);
                 int res = sendToPrint();
                 v.setEnabled(true);
-                Toast.makeText(PrintActivity.this, "Напечатано "+res, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PrintActivity.this, "Напечатано "+res+" "+msg, Toast.LENGTH_SHORT).show();
                 //onBackPressed();
                 }
         });
@@ -79,8 +116,6 @@ public class PrintActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        msg = getReceiptText();
     }
 
     @Override
@@ -95,7 +130,8 @@ public class PrintActivity extends AppCompatActivity {
         BluetoothSocket mmSocket=null;
         OutputStream mmOutputStream=null;
         AbstractPrinter dev = null;
-        String currentDate = dateFormat.format(Calendar.getInstance().getTime());
+        msg = getReceiptText();
+//        String currentDate = dateFormat.format(Calendar.getInstance().getTime());
 //        msg = "Билет на автобус\n" +
 //                "\n" +
 //                "дата:\t"+currentDate+"\n" +
@@ -175,19 +211,6 @@ public class PrintActivity extends AppCompatActivity {
         responseCall.enqueue(new Callback<ReceiptResponse>() {
             @Override
             public void onResponse(Call<ReceiptResponse> call, Response<ReceiptResponse> response) {
-                if (response.code()==200){
-                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PrintActivity.this);
-                    builder.setTitle("Результат");
-                    builder.setMessage("text "+response.body().getText());
-                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    builder.setCancelable(false);
-                    android.app.AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                }
                 msgResponse=response.body().getText();
             }
 

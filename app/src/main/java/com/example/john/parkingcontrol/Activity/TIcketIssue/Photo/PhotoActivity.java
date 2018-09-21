@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
@@ -51,7 +52,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
-public class PhotoActivity extends AppCompatActivity implements View.OnClickListener{
+public class PhotoActivity extends AppCompatActivity{
 
     private Button button1, button2, button3, button4;
     private ImageView preView;
@@ -70,6 +71,8 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
     private static final int CAMERA_PIC_REQUEST = 1111;
     private PrDialog prDialog = new PrDialog();
     int i = 0;
+    private int perspectiveCode = 0;
+    private int clickedButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,37 +122,44 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
 //
 //            }
 //        });
-        button1.setOnClickListener(this);
-        button2.setOnClickListener(this);
-        button3.setOnClickListener(this);
-        button4.setOnClickListener(this);
+
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setEnabled(false);
+                captureImage();
+                perspectiveCode=1;
+                clickedButton = button1.getId();}
+        });
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setEnabled(false);
+                captureImage();
+                perspectiveCode=2;
+                clickedButton = button2.getId();
+            }
+        });
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setEnabled(false);
+                captureImage();
+                perspectiveCode=3;
+                clickedButton = button3.getId();
+            }
+        });
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setEnabled(false);
+                captureImage();
+                perspectiveCode=4;
+                clickedButton = button4.getId();
+            }
+        });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.button1:
-                v.setEnabled(false);
-                captureImage();
-                uploadImage(1, button1);
-                break;
-            case R.id.button2:
-                v.setEnabled(false);
-                captureImage();
-                uploadImage(2, button2);
-                break;
-            case R.id.button3:
-                v.setEnabled(false);
-                captureImage();
-                uploadImage(3, button3);
-                break;
-            case R.id.button4:
-                v.setEnabled(false);
-                captureImage();
-                uploadImage(4, button4);
-                break;
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -173,6 +183,8 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
 //                    buttonUpload.setEnabled(true);
 
                     file = imageToString();
+                    Button myButton = findViewById(clickedButton);
+                    uploadImage(perspectiveCode, myButton);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -194,7 +206,8 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
 //                    buttonTakePhoto.setEnabled(false);
 
                     file = imageToString();
-
+                    Button myButton = findViewById(clickedButton);
+                    uploadImage(perspectiveCode, myButton);
                 }else{
                     //Glide.with(this).load(fileUri).into(preView);
                     postPath = mImageFileLocation;
@@ -208,7 +221,8 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
 //                    buttonTakePhoto.setEnabled(false);
 
                     file = imageToString();
-
+                    Button myButton = findViewById(clickedButton);
+                    uploadImage(perspectiveCode, myButton);
                 }
 
             }
@@ -288,6 +302,7 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
                         prDialog.hideDialog();
                         if (response.code()==200) {
                             if (response.body().getIsSuccess()) {
+                                currentButton.setBackgroundColor(Color.GREEN);
                                 i++;
 //                                TextView textView = findViewById(R.id.textView7);
 //                                textView.setText(response.toString());
@@ -430,6 +445,10 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 //                buttonTakePhoto.setEnabled(true);
+                button1.setEnabled(true);
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+                button4.setEnabled(true);
             }
         }
     }
