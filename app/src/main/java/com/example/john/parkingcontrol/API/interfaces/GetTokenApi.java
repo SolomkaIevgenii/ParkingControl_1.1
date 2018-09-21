@@ -1,7 +1,11 @@
 package com.example.john.parkingcontrol.API.interfaces;
 
+import android.content.Intent;
+
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncRequest;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncResponse;
+import com.example.john.parkingcontrol.API.models.AddCarInc.Receipt.ReceiptRequest;
+import com.example.john.parkingcontrol.API.models.AddCarInc.Receipt.ReceiptResponse;
 import com.example.john.parkingcontrol.API.models.AddCarInc.UploadResponse;
 import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
 import com.example.john.parkingcontrol.API.models.ListCarIncRequest;
@@ -41,6 +45,10 @@ public interface GetTokenApi {
     @POST("ExtApi/CheckCar")
     Call<CheckCarResponse> getPaymentStatus(@Body CheckCarRequest paymentStatusRequest);
 
+    //Запрос чека
+    @POST("api/decision")
+    Call<ReceiptResponse> getReceipt(@Body ReceiptRequest receiptRequest);
+
     //Получение токена через from-data
     @FormUrlEncoded
     @POST("api/token")
@@ -48,5 +56,5 @@ public interface GetTokenApi {
 
     @FormUrlEncoded
     @POST("api/incident_upload_file")
-    Call<UploadResponse> uploadPhoto(@Field("Guid") String guid, @Field("Base64StringContent") String file);
+    Call<UploadResponse> uploadPhoto(@Field("Guid") String guid, @Field("Base64StringContent") String file, @Field("PhotoPerspectiveCode")Integer photoPerspectiveCode);
 }

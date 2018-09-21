@@ -51,9 +51,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
-public class PhotoActivity extends AppCompatActivity {
+public class PhotoActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button buttonChoose, buttonUpload, buttonTakePhoto;
+    private Button button1, button2, button3, button4;
     private ImageView preView;
     private String myToken, myGuid, postPath, file;
     private String responseCarNumber;
@@ -83,16 +83,22 @@ public class PhotoActivity extends AppCompatActivity {
         isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
 
         myGuid = getIntent().getExtras().getString("guid");
-        buttonChoose = findViewById(R.id.buttonChoose);
-        buttonUpload = findViewById(R.id.buttonUpload);
-        buttonTakePhoto = findViewById(R.id.buttonTakePhoto);
-        preView = findViewById(R.id.imagePreview);
+        button1 = findViewById(R.id.button1);
+        button2 = findViewById(R.id.button2);
+        button3 = findViewById(R.id.button3);
+        button4 = findViewById(R.id.button4);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            buttonTakePhoto.setEnabled(false);
+            button1.setEnabled(false);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
+            button4.setEnabled(false);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         } else {
-            buttonTakePhoto.setEnabled(true);
+            button1.setEnabled(true);
+            button2.setEnabled(true);
+            button3.setEnabled(true);
+            button4.setEnabled(true);
         }
 
 
@@ -102,27 +108,48 @@ public class PhotoActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                captureImage();
-            }
-        });
-
-        buttonChoose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, IMG_REQUEST);
-
-            }
-        });
+//        buttonChoose.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Intent intent = new Intent();
+//                intent.setType("image/*");
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                startActivityForResult(intent, IMG_REQUEST);
+//
+//            }
+//        });
+        button1.setOnClickListener(this);
+        button2.setOnClickListener(this);
+        button3.setOnClickListener(this);
+        button4.setOnClickListener(this);
     }
 
-
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.button1:
+                v.setEnabled(false);
+                captureImage();
+                uploadImage(1, button1);
+                break;
+            case R.id.button2:
+                v.setEnabled(false);
+                captureImage();
+                uploadImage(2, button2);
+                break;
+            case R.id.button3:
+                v.setEnabled(false);
+                captureImage();
+                uploadImage(3, button3);
+                break;
+            case R.id.button4:
+                v.setEnabled(false);
+                captureImage();
+                uploadImage(4, button4);
+                break;
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -141,9 +168,9 @@ public class PhotoActivity extends AppCompatActivity {
                     bitmap = Bitmap.createScaledBitmap(bitmap, 900, 1200, false);
                     preView.setImageBitmap(bitmap);
                     preView.setVisibility(View.VISIBLE);
-                    buttonChoose.setEnabled(false);
-                    buttonTakePhoto.setEnabled(false);
-                    buttonUpload.setEnabled(true);
+//                    buttonChoose.setEnabled(false);
+//                    buttonTakePhoto.setEnabled(false);
+//                    buttonUpload.setEnabled(true);
 
                     file = imageToString();
                 } catch (IOException e) {
@@ -162,13 +189,11 @@ public class PhotoActivity extends AppCompatActivity {
                     matrix.postRotate(90);
                     bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                     bitmap = Bitmap.createScaledBitmap(bitmap, 900, 1200, false);
-                    preView.setImageBitmap(bitmap);
-                    buttonUpload.setEnabled(true);
-                    buttonTakePhoto.setEnabled(false);
+//                    preView.setImageBitmap(bitmap);
+//                    buttonUpload.setEnabled(true);
+//                    buttonTakePhoto.setEnabled(false);
 
                     file = imageToString();
-
-                    uploadImage();
 
                 }else{
                     //Glide.with(this).load(fileUri).into(preView);
@@ -179,12 +204,10 @@ public class PhotoActivity extends AppCompatActivity {
                     matrix.postRotate(90);
                     bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                     bitmap = Bitmap.createScaledBitmap(bitmap, 900, 1200, false);
-                    buttonUpload.setEnabled(true);
-                    buttonTakePhoto.setEnabled(false);
+//                    buttonUpload.setEnabled(true);
+//                    buttonTakePhoto.setEnabled(false);
 
                     file = imageToString();
-
-                    uploadImage();
 
                 }
 
@@ -193,8 +216,8 @@ public class PhotoActivity extends AppCompatActivity {
         }
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Невиправна помилка", Toast.LENGTH_LONG).show();
-            buttonUpload.setEnabled(false);
-            buttonTakePhoto.setEnabled(true);
+//            buttonUpload.setEnabled(false);
+//            buttonTakePhoto.setEnabled(true);
         }
 
     }
@@ -250,7 +273,7 @@ public class PhotoActivity extends AppCompatActivity {
 
 
     }
-    private void uploadImage(){
+    private void uploadImage(int photoPerspectiveCode, final Button currentButton){
                 prDialog.showDialog();
                 //final String file = imageToString();
                 sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
@@ -258,7 +281,7 @@ public class PhotoActivity extends AppCompatActivity {
 
                 service = retrofit.create(GetTokenApi.class);
 
-                Call<UploadResponse> uploadResponseCall = service.uploadPhoto(myGuid, file);
+                Call<UploadResponse> uploadResponseCall = service.uploadPhoto(myGuid, file, photoPerspectiveCode);
                 uploadResponseCall.enqueue(new Callback<UploadResponse>() {
                     @Override
                     public void onResponse(Call<UploadResponse> call, Response<UploadResponse> response) {
@@ -266,8 +289,8 @@ public class PhotoActivity extends AppCompatActivity {
                         if (response.code()==200) {
                             if (response.body().getIsSuccess()) {
                                 i++;
-                                TextView textView = findViewById(R.id.textView7);
-                                textView.setText(response.toString());
+//                                TextView textView = findViewById(R.id.textView7);
+//                                textView.setText(response.toString());
 
                                     if (i==4) {
                                         Intent intent = new Intent(PhotoActivity.this, FillTicketActivity.class);
@@ -299,7 +322,7 @@ public class PhotoActivity extends AppCompatActivity {
                             else{
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                                 builder.setTitle("Помилка");
-                                builder.setMessage("Помилка, зверніться до адміністратора.");
+                                builder.setMessage("Помилка, зверніться до адміністратора."+response.body().getErrorMsg());
                                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -321,6 +344,7 @@ public class PhotoActivity extends AppCompatActivity {
                     public void onFailure(Call<UploadResponse> call, Throwable t) {
                         prDialog.hideDialog();
                         Toast.makeText(PhotoActivity.this, "Помилка зв'язку, перевірте інтернет з'єднання", Toast.LENGTH_SHORT).show();
+                        currentButton.setEnabled(true);
                     }
                 });
     }
@@ -405,7 +429,7 @@ public class PhotoActivity extends AppCompatActivity {
         if (requestCode == 0) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                buttonTakePhoto.setEnabled(true);
+//                buttonTakePhoto.setEnabled(true);
             }
         }
     }

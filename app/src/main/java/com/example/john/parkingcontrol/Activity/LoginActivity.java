@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(LoginActivity.this, PrintActivity.class);
+                intent.putExtra("guid", "a0d1a342-7e59-4756-ab13-1e3334cfe508");
                 startActivity(intent);
                 /*Intent intent = new Intent(LoginActivity.this, FillTicketActivity.class);
                 startActivity(intent);*/
