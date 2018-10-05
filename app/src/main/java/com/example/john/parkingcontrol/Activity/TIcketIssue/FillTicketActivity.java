@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncRequest;
@@ -35,7 +36,7 @@ public class FillTicketActivity extends AppCompatActivity {
     private String myToken;
     private String responseCarNumber;
     private EditText driverName, description, address, driverContact, finalCarNumber;
-    private Double gpsLong, gpsLat;
+    private Double gpsLon, gpsLat;
     private Boolean isEmptyNumber;
 
     @Override
@@ -44,10 +45,11 @@ public class FillTicketActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fill_ticket);
         Button button = findViewById(R.id.buttonSetIssue);
 
+        gpsLon = getIntent().getExtras().getDouble("gpsLon");;
+        gpsLat = getIntent().getExtras().getDouble("gpsLat");;
         myGuid = getIntent().getExtras().getString("guid");
         isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
         finalCarNumber = findViewById(R.id.editCarNumberInc);
-
 
         sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         myToken = "Bearer "+sPref.getString(getResources().getString(R.string.sp_field_token), "");
@@ -84,8 +86,6 @@ public class FillTicketActivity extends AppCompatActivity {
             public void onClick(final View v) {
                 final String carNumber=finalCarNumber.getText().toString();
                 v.setEnabled(false);
-                gpsLong = 0.0d;
-                gpsLat = 0.0d;
                 driverName = findViewById(R.id.editDriverName);
                 driverContact = findViewById(R.id.editDriverContacts);
                 description = findViewById(R.id.editDescription);
@@ -99,7 +99,7 @@ public class FillTicketActivity extends AppCompatActivity {
                 addCarIncRequest.setCarDriverName(driverName.getText().toString());
                 addCarIncRequest.setDescription(description.getText().toString());
                 addCarIncRequest.setIncidentAddress(address.getText().toString());
-                addCarIncRequest.setGpsLong(gpsLong);
+                addCarIncRequest.setGpsLong(gpsLon);
                 addCarIncRequest.setGpsLat(gpsLat);
                 addCarIncRequest.setLawEnactmentId(1);
                 addCarIncRequest.setDocumentTypeId(1);

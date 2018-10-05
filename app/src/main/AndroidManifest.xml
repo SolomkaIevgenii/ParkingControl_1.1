@@ -35,8 +35,7 @@
         <activity android:name=".Activity.HistoryList.HistoryActivity" />
         <activity android:name=".Activity.TIcketIssue.FillTicketActivity" />
         <activity android:name=".Activity.PrintActivity" />
-        <activity android:name=".Activity.TIcketIssue.Photo.PhotoActivity"></activity>
-
+        <activity android:name=".Activity.TIcketIssue.Photo.PhotoActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -45,8 +44,10 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
+
+        <activity android:name=".Activity.TIcketIssue.ProtokolActivity"></activity>
     </application>
 
 </manifest>

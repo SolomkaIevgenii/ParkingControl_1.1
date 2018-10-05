@@ -212,11 +212,11 @@ public class PrintActivity extends AppCompatActivity {
         receiptRequest.setGuid(myGuid);
         receiptRequest.setFormat("txt");
 
-        Call<ReceiptResponse> responseCall = service.getReceipt(myToken, receiptRequest);
+        Call<ReceiptResponse> responseCall = service.getReceipt("Bearer "+myToken, receiptRequest);
         responseCall.enqueue(new Callback<ReceiptResponse>() {
             @Override
             public void onResponse(Call<ReceiptResponse> call, Response<ReceiptResponse> response) {
-                msgResponse=response.body().getText();
+                //msgResponse=response.body().getText();
             }
 
             @Override

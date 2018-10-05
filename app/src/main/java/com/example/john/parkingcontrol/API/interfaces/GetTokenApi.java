@@ -49,6 +49,10 @@ public interface GetTokenApi {
     @POST("api/decision")
     Call<ReceiptResponse> getReceipt(@Header("Authorization") String token, @Body ReceiptRequest receiptRequest);
 
+    //апрос Номера авто
+    @POST("api/car_info")
+    Call<ReceiptResponse> getCarInfo(@Header("Authorization") String token, @Body String carNumber);
+
     //Получение токена через from-data
     @FormUrlEncoded
     @POST("api/token")

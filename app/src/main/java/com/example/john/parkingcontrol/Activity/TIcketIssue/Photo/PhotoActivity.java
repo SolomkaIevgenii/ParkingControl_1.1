@@ -113,8 +113,6 @@ public class PhotoActivity extends AppCompatActivity {
             findViewById(R.id.buttonGetBack).setEnabled(false);
         }
 
-        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
         myGuid = getIntent().getExtras().getString("guid");
         button1 = findViewById(R.id.button1);
         button2 = findViewById(R.id.button3);
@@ -214,7 +212,7 @@ public class PhotoActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        locationManager.removeUpdates(locationListener);
+        //locationManager.removeUpdates(locationListener);
     }
 
     private LocationListener locationListener = new LocationListener() {
@@ -223,7 +221,7 @@ public class PhotoActivity extends AppCompatActivity {
             if (location==null){
                 return;
             }
-            else if (location!=null){
+            else if (location!=null&&gpsLat!=null&&gpsLat!=0&&gpsLat!=0.0&&gpsLon!=null&&gpsLon!=0&&gpsLon!=0.0){
                 prDialog.hideDialog();
                 g=1;
                 button1.setEnabled(true);
@@ -336,7 +334,6 @@ public class PhotoActivity extends AppCompatActivity {
                                 bytes = new byte[fileSize];
                                 int read = fS.read(bytes,0, fileSize);
                                 if (read>0){
-                                    //Toast.makeText(this, "File size"+bytes.length+" Abstract size "+read, Toast.LENGTH_SHORT).show();
 
                                     encodedFile = Base64.encodeToString(bytes, Base64.DEFAULT);
 
@@ -404,16 +401,13 @@ public class PhotoActivity extends AppCompatActivity {
             }
         }
         else if (resultCode == RESULT_CANCELED) {
-            //Toast.makeText(this, "11111", Toast.LENGTH_SHORT).show();
             Button myButton = findViewById(clickedButton);
             myButton.setEnabled(true);
-//            buttonUpload.setEnabled(false);
-//            buttonTakePhoto.setEnabled(true);
+
         }
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Невиправна помилка", Toast.LENGTH_LONG).show();
-//            buttonUpload.setEnabled(false);
-//            buttonTakePhoto.setEnabled(true);
+
         }
 
     }
@@ -469,12 +463,10 @@ public class PhotoActivity extends AppCompatActivity {
                     photoFile);
             callCameraApplicationIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
 
-            // The following is a new line with a trying attempt
             callCameraApplicationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             Logger.getAnonymousLogger().info("Calling the camera App by intent");
 
-            // The following strings calls the camera app and wait for his file in return.
             prDialog.showDialog();
             startActivityForResult(callCameraApplicationIntent, CAMERA_PIC_REQUEST);
         } else {
@@ -485,7 +477,6 @@ public class PhotoActivity extends AppCompatActivity {
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 
-            // start the image capture Intent
             prDialog.showDialog();
             startActivityForResult(intent, CAMERA_PIC_REQUEST);
         }
@@ -493,14 +484,12 @@ public class PhotoActivity extends AppCompatActivity {
 
     }
     private void uploadImage(int photoPerspectiveCode, final Button currentButton){
-                //prDialog.showDialog();
-                //final String file = imageToString();
-//                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-//                myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
 
                 service = retrofit.create(GetTokenApi.class);
 
-                Call<UploadResponse> uploadResponseCall = service.uploadPhoto(myToken, myGuid, encodedFile, photoPerspectiveCode);
+                Call<UploadResponse> uploadResponseCall = service.uploadPhoto("Bearer "+myToken, myGuid, encodedFile, photoPerspectiveCode);
                 uploadResponseCall.enqueue(new Callback<UploadResponse>() {
                     @Override
                     public void onResponse(Call<UploadResponse> call, Response<UploadResponse> response) {
@@ -513,34 +502,17 @@ public class PhotoActivity extends AppCompatActivity {
 //                                textView.setText(response.toString());
 
                                     if (i==4) {
+                                        locationManager.removeUpdates(locationListener);
                                         Intent intent = new Intent(PhotoActivity.this, FillTicketActivity.class);
                                         intent.putExtra("guid", myGuid);
                                         intent.putExtra("isEmptyNumber", isEmptyNumber);
                                         intent.putExtra("responseCarNumber", responseCarNumber);
+                                        intent.putExtra("gpsLat", gpsLat);
+                                        intent.putExtra("gpsLon", gpsLon);
                                         startActivity(intent);
                                         finish();
                                     }
-                            }else if (response.code()==401){
-                                currentButton.setEnabled(true);
-                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
-                                builder.setTitle("Помилка");
-                                builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
-                                        "Вас буде перенаправлено на сторінку авторизації");
-                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
-                                        startActivity(intent);
-                                        PhotoActivity.this.finish();
-                                        dialog.dismiss();
-                                    }
-                                });
-                                builder.setCancelable(false);
-                                android.app.AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
-
-                            }
-                            else{
+                            }else{
                                 currentButton.setEnabled(true);
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                                 builder.setTitle("Помилка");
@@ -548,6 +520,7 @@ public class PhotoActivity extends AppCompatActivity {
                                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        locationManager.removeUpdates(locationListener);
                                         Intent intent = new Intent(PhotoActivity.this, MainActivity.class);
                                         startActivity(intent);
                                         PhotoActivity.this.finish();
@@ -559,7 +532,29 @@ public class PhotoActivity extends AppCompatActivity {
                                 alertDialog.show();
 
                             }
-                        }else{
+                        }else if (response.code()==401){
+                            currentButton.setEnabled(true);
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
+                            builder.setTitle("Помилка");
+                            builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
+                                    "Вас буде перенаправлено на сторінку авторизації");
+                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    locationManager.removeUpdates(locationListener);
+                                    Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    PhotoActivity.this.finish();
+                                    dialog.dismiss();
+                                }
+                            });
+                            builder.setCancelable(false);
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+
+                        }
+
+                        else{
                             currentButton.setEnabled(true);
                             Toast.makeText(PhotoActivity.this, "Помилка. Зменьшіть якість фото "+response.code(), Toast.LENGTH_LONG).show();
                         }
@@ -667,6 +662,7 @@ public class PhotoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
+        locationManager.removeUpdates(locationListener);
         finish();
     }
 }
