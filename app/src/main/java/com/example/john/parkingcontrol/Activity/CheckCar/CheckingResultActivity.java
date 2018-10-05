@@ -1,6 +1,5 @@
 package com.example.john.parkingcontrol.Activity.CheckCar;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +15,6 @@ import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarRequest;
 import com.example.john.parkingcontrol.API.models.CheckCar.CheckCarResponse;
 import com.example.john.parkingcontrol.API.models.Guid.GuidResponse;
 import com.example.john.parkingcontrol.Activity.LoginActivity;
-import com.example.john.parkingcontrol.Activity.PrintActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
 import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
 import com.example.john.parkingcontrol.R;
@@ -24,12 +22,8 @@ import com.example.john.parkingcontrol.R;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,11 +37,9 @@ public class CheckingResultActivity extends AppCompatActivity {
     private SharedPreferences sPref;
     private String carNumber, myGuid, myToken;
     private Boolean isEmptyNumber = false;
-    //private PaymentStatusRequest paymentStatusRequest = new PaymentStatusRequest();
     private String tokenStaticTemporary = "fdf909e4j3f03jikdsjfpsdg9sdfd0ifjsdik";
 
     private TextView resultView, status, hours, startTime, endTime, parkName, parkAddress;
-    //private MyAsyncTask myAsyncTask;
     private PrDialog prDialog = new PrDialog();
     private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yy"+" о "+"HH:mm");
     private Date starTtime, endTtime = null;
@@ -99,6 +91,14 @@ public class CheckingResultActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.buttonGetBack).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+                finish();
+            }
+        });
+
 
     }
 
@@ -132,6 +132,7 @@ public class CheckingResultActivity extends AppCompatActivity {
                             findViewById(R.id.buttonRefresh).setVisibility(View.GONE);
                             findViewById(R.id.buttonOK).setVisibility(View.GONE);
                             findViewById(R.id.buttonTicketIssue).setVisibility(View.VISIBLE);
+                            findViewById(R.id.buttonGetBack).setEnabled(true);
                             resultView.setText(response.body().getMessage());
                             hours.setVisibility(View.GONE);
                             parkName.setVisibility(View.GONE);
@@ -140,12 +141,13 @@ public class CheckingResultActivity extends AppCompatActivity {
                             endTime.setVisibility(View.GONE);
                             status.setVisibility(View.GONE);
                             break;
-                        }else if(response.body().getMessage().toString().equalsIgnoreCase("Пустий номер авто!")){
+                        }else if(response.body().getMessage().equalsIgnoreCase("Пустий номер авто!")){
 
                             findViewById(R.id.buttonRefresh).setVisibility(View.GONE);
                             Button buttonOKtoBACK = findViewById(R.id.buttonOK);
                             buttonOKtoBACK.setText("Назад");
                             buttonOKtoBACK.setVisibility(View.VISIBLE);
+                            findViewById(R.id.buttonGetBack).setVisibility(View.GONE);
                             break;
 
                         }else{
@@ -171,10 +173,12 @@ public class CheckingResultActivity extends AppCompatActivity {
                             endTime.setText("Сплачено до: "+formattedTimeEnd);
                             findViewById(R.id.buttonRefresh).setVisibility(View.VISIBLE);
                             findViewById(R.id.buttonOK).setVisibility(View.VISIBLE);
+                            findViewById(R.id.buttonGetBack).setVisibility(View.GONE);
                             break;
                         }
 
                     case 401:
+                        findViewById(R.id.buttonGetBack).setEnabled(true);
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CheckingResultActivity.this);
                         builder.setTitle("Помилка");
                         builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
@@ -193,7 +197,8 @@ public class CheckingResultActivity extends AppCompatActivity {
                         alertDialog.show();
 
                     default:
-                        Toast.makeText(CheckingResultActivity.this, getResources().getString(R.string.app_an_error) + " " + response.code(), Toast.LENGTH_SHORT).show();
+                        findViewById(R.id.buttonGetBack).setEnabled(true);
+                        Toast.makeText(CheckingResultActivity.this, getResources().getString(R.string.app_an_error) + " " + response.code()+" Зверніться до адміністратора", Toast.LENGTH_SHORT).show();
                         break;
 
 
@@ -204,28 +209,14 @@ public class CheckingResultActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<CheckCarResponse> call, Throwable t) {
                 prDialog.hideDialog();
-                Toast.makeText(CheckingResultActivity.this, "ЗАшел2 "+t, Toast.LENGTH_SHORT).show();
+                findViewById(R.id.buttonGetBack).setEnabled(true);
+                Toast.makeText(CheckingResultActivity.this, "Помилка зв`язку, перевірте інтернет з`єднання."+t, Toast.LENGTH_SHORT).show();
 
             }
 
         });
     }
 
-//    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
-//    private long mBackPressed;
-//
-//    @Override
-//    public void onBackPressed()
-//    {
-//        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
-//        {
-//            super.onBackPressed();
-//            return;
-//        }
-//        else { Toast.makeText(getBaseContext(), "Натиснить 'назад' повторно щоб повернутися в пропередне меню.", Toast.LENGTH_SHORT).show(); }
-//
-//        mBackPressed = System.currentTimeMillis();
-//    }
     private void badResult(){
         isEmptyNumber=false;
         Intent intent = new Intent(CheckingResultActivity.this, PhotoActivity.class);
@@ -234,6 +225,7 @@ public class CheckingResultActivity extends AppCompatActivity {
         intent.putExtra("responseCarNumber", carNumber.toUpperCase());
         startActivity(intent);
         findViewById(R.id.buttonTicketIssue).setEnabled(true);
+        findViewById(R.id.buttonGetBack).setEnabled(true);
     }
     private void getGuid(){
 
@@ -254,14 +246,14 @@ public class CheckingResultActivity extends AppCompatActivity {
             public void onResponse(Call<GuidResponse> call, Response<GuidResponse> response) {
                 if(response.code()==200){
 
-                    myGuid= response.body().getGuid().toString();
+                    myGuid= response.body().getGuid();
                     badResult();
                 }
             }
 
             @Override
             public void onFailure(Call<GuidResponse> call, Throwable t) {
-
+                findViewById(R.id.buttonGetBack).setEnabled(true);
             }
         });
     }

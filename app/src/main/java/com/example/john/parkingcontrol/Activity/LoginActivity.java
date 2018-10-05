@@ -1,8 +1,17 @@
 package com.example.john.parkingcontrol.Activity;
 
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText enteredLogin;
     private EditText enteredPassword;
     private ProgressDialog pDialog;
+    private BluetoothAdapter mBluetoothAdapter=null;
 
 
     @Override
@@ -48,6 +58,15 @@ public class LoginActivity extends AppCompatActivity {
 //        initDialog();
         final PrDialog prDialog = new PrDialog();
         prDialog.initDialog(getString(R.string.app_text_loading), this);
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if(!mBluetoothAdapter.isEnabled()) {
+            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetooth, 0);
+        }
+
+        final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
         enteredLogin = findViewById(R.id.editTextLogin);
 
@@ -115,6 +134,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 //showDialog();
+
+                if(!locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER ))
+                {
+                    Toast.makeText(LoginActivity.this, "Включите GPS", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 prDialog.showDialog();
                 v.setEnabled(false);
 
@@ -123,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                 //Импорт данных в клас, для отправки запроса в Json
                 tokenRequest.setLogin(loginEntered.getText().toString());
                 tokenRequest.setPassword(passwordEntered.getText().toString());
+                tokenRequest.setDeviceInfo("");
 
 
                 //String superLogin = loginEntered.getText().toString();

@@ -62,5 +62,13 @@ public class EnterNumberActivity extends AppCompatActivity {
                 v.setEnabled(true);
             }
         });
+
+        findViewById(R.id.buttonGetBack).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+                finish();
+            }
+        });
     }
 }

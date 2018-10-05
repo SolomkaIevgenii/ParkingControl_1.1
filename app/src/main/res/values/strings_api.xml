@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_main_url">http://inspection.24parking.com.ua/</string>
+    <string name="app_main_url">http://inspection.24parking.com.ua:5050/</string>
     <string name="provider_gps">GPS</string>
     <string name="provider_network">Network</string>
     <string name="location_settings">Location settings</string>

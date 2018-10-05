@@ -47,7 +47,7 @@ public interface GetTokenApi {
 
     //Запрос чека
     @POST("api/decision")
-    Call<ReceiptResponse> getReceipt(@Body ReceiptRequest receiptRequest);
+    Call<ReceiptResponse> getReceipt(@Header("Authorization") String token, @Body ReceiptRequest receiptRequest);
 
     //Получение токена через from-data
     @FormUrlEncoded
@@ -56,5 +56,6 @@ public interface GetTokenApi {
 
     @FormUrlEncoded
     @POST("api/incident_upload_file")
-    Call<UploadResponse> uploadPhoto(@Field("Guid") String guid, @Field("Base64StringContent") String file, @Field("PhotoPerspectiveCode")int photoPerspectiveCode);
+    Call<UploadResponse> uploadPhoto(@Header("Authorization") String token, @Field("Guid") String guid, @Field("Base64StringContent") String file, @Field("PhotoPerspectiveCode")int photoPerspectiveCode);
+
 }

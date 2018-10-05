@@ -7,6 +7,9 @@ public class LK_P34 extends AbstractPrinter{
     }
 
     public byte[] getDataForPrint(String msg) throws UnsupportedEncodingException {
-        return msg.getBytes("IBM866");
+        String src = msg;
+        src = src.replace('і', 'i');
+        src = src.replace('І', 'I');
+        return src.getBytes("IBM866");
     }
 }

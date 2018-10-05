@@ -6,4 +6,5 @@
     <string name="app_text_miss_password">Невірний логін або пароль</string>
     <string name="app_text_enter">Увійти</string>
     <string name="app_text_loading">Завантаження...</string>
+    <string name="app_text_to_exit">Для виходу натисніть кнопку \"НАЗАД\" повторно</string>
 </resources>

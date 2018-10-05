@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
             return;
         }
-        else { Toast.makeText(getBaseContext(), "Tap back button in order to exit", Toast.LENGTH_SHORT).show(); }
+        else { Toast.makeText(getBaseContext(), getString(R.string.app_text_to_exit), Toast.LENGTH_SHORT).show(); }
 
         mBackPressed = System.currentTimeMillis();
     }

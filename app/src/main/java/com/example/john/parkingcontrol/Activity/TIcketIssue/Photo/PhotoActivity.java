@@ -1,6 +1,9 @@
 package com.example.john.parkingcontrol.Activity.TIcketIssue.Photo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,24 +12,31 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.AddCarInc.UploadResponse;
 import com.example.john.parkingcontrol.Activity.LoginActivity;
@@ -36,9 +46,13 @@ import com.example.john.parkingcontrol.BuildConfig;
 import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
 import com.example.john.parkingcontrol.R;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -51,12 +65,18 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_EDGE;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_GPRS;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_GSM;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_UNKNOWN;
 
-public class PhotoActivity extends AppCompatActivity{
+public class PhotoActivity extends AppCompatActivity {
 
     private Button button1, button2, button3, button4;
     private ImageView preView;
-    private String myToken, myGuid, postPath, file;
+    private String myToken, myGuid, postPath, file, encodedFile;
+    private Double gpsLat, gpsLon;
+
     private String responseCarNumber;
     private String mImageFileLocation = "";
     private Boolean isEmptyNumber;
@@ -73,6 +93,11 @@ public class PhotoActivity extends AppCompatActivity{
     int i = 0;
     private int perspectiveCode = 0;
     private int clickedButton;
+    private LocationManager locationManager;
+    private StringBuilder sbGPS;
+    private StringBuilder sbNet;
+    private int g = 0;
+    private int gpsStatus=111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,16 +105,21 @@ public class PhotoActivity extends AppCompatActivity{
         setContentView(R.layout.activity_photo);
         prDialog.initDialog(getString(R.string.app_text_loading), this);
 
-        //Toast.makeText(this, "111 "+myGuid, Toast.LENGTH_SHORT).show();
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         responseCarNumber = getIntent().getExtras().getString("responseCarNumber");
         isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
+        if (!isEmptyNumber) {
+            findViewById(R.id.buttonGetBack).setEnabled(false);
+        }
 
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
         myGuid = getIntent().getExtras().getString("guid");
         button1 = findViewById(R.id.button1);
-        button2 = findViewById(R.id.button2);
-        button3 = findViewById(R.id.button3);
-        button4 = findViewById(R.id.button4);
+        button2 = findViewById(R.id.button3);
+        button3 = findViewById(R.id.button4);
+        button4 = findViewById(R.id.button2);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             button1.setEnabled(false);
@@ -111,32 +141,21 @@ public class PhotoActivity extends AppCompatActivity{
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-//        buttonChoose.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent = new Intent();
-//                intent.setType("image/*");
-//                intent.setAction(Intent.ACTION_GET_CONTENT);
-//                startActivityForResult(intent, IMG_REQUEST);
-//
-//            }
-//        });
-
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setEnabled(false);
                 captureImage();
-                perspectiveCode=1;
-                clickedButton = button1.getId();}
+                perspectiveCode = 1;
+                clickedButton = button1.getId();
+            }
         });
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setEnabled(false);
                 captureImage();
-                perspectiveCode=2;
+                perspectiveCode = 2;
                 clickedButton = button2.getId();
             }
         });
@@ -145,7 +164,7 @@ public class PhotoActivity extends AppCompatActivity{
             public void onClick(View v) {
                 v.setEnabled(false);
                 captureImage();
-                perspectiveCode=3;
+                perspectiveCode = 3;
                 clickedButton = button3.getId();
             }
         });
@@ -154,17 +173,111 @@ public class PhotoActivity extends AppCompatActivity{
             public void onClick(View v) {
                 v.setEnabled(false);
                 captureImage();
-                perspectiveCode=4;
+                perspectiveCode = 4;
                 clickedButton = button4.getId();
+            }
+        });
+        findViewById(R.id.buttonGetBack).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+                finish();
             }
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (g==0||gpsStatus==111){
+            prDialog.showDialog();
+            button1.setEnabled(false);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
+            button4.setEnabled(false);
+        }
+
+        startLocation();
+    }
+    private void startLocation(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        } else if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        }
+        else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000 * 5, 10, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000 * 5, 10, locationListener);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        locationManager.removeUpdates(locationListener);
+    }
+
+    private LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location==null){
+                return;
+            }
+            else if (location!=null){
+                prDialog.hideDialog();
+                g=1;
+                button1.setEnabled(true);
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+                button4.setEnabled(true);
+            }
+            gpsLat = location.getLatitude();
+            gpsLon = location.getLongitude();
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            if ((provider.equals(LocationManager.GPS_PROVIDER)&&status==2)||(provider.equals(LocationManager.NETWORK_PROVIDER)&&status==2)){
+                prDialog.hideDialog();
+                g=1;
+                gpsStatus=status;
+                button1.setEnabled(true);
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+                button4.setEnabled(true);
+            }
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
+    private void setLocation(Location location){
+        if (location==null)
+            return;
+        if (location.getProvider().equals(LocationManager.GPS_PROVIDER)){
+
+            //TODO
+        }
+        else if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)){
+            //TODO
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK){
+            findViewById(R.id.buttonGetBack).setEnabled(false);
 
             if(requestCode==IMG_REQUEST && data!=null){
 
@@ -182,7 +295,7 @@ public class PhotoActivity extends AppCompatActivity{
 //                    buttonTakePhoto.setEnabled(false);
 //                    buttonUpload.setEnabled(true);
 
-                    file = imageToString();
+                    //file = imageToString();
                     Button myButton = findViewById(clickedButton);
                     uploadImage(perspectiveCode, myButton);
                 } catch (IOException e) {
@@ -193,40 +306,109 @@ public class PhotoActivity extends AppCompatActivity{
             else if (requestCode == CAMERA_PIC_REQUEST){
                 if (Build.VERSION.SDK_INT > 21) {
 
-                    //Glide.with(this).load(mImageFileLocation).into(preView);
-                    postPath = mImageFileLocation;
-                    File f = new File(postPath);
-                    bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), null);
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(90);
-                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 900, 1200, false);
-//                    preView.setImageBitmap(bitmap);
-//                    buttonUpload.setEnabled(true);
-//                    buttonTakePhoto.setEnabled(false);
+                    if (android.os.Build.VERSION.SDK_INT >= 26){
 
-                    file = imageToString();
-                    Button myButton = findViewById(clickedButton);
-                    uploadImage(perspectiveCode, myButton);
+                        //Glide.with(this).load(mImageFileLocation).into(preView);
+                        postPath = mImageFileLocation;
+
+                        try {
+                            byte[] bytes = Files.readAllBytes(new File(postPath).toPath());
+                            encodedFile = Base64.encodeToString(bytes, Base64.DEFAULT);
+                            Button myButton = findViewById(clickedButton);
+                            uploadImage(perspectiveCode, myButton);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                    else {
+                        FileInputStream fS = null;
+                        byte[] bytes;
+                        File f;
+
+                        try {
+                            postPath = mImageFileLocation;
+                            f = new File(postPath);
+                            fS = new FileInputStream(f);
+                            int fileSize = (int) f.length();
+                            if (fileSize>0){
+                                bytes = new byte[fileSize];
+                                int read = fS.read(bytes,0, fileSize);
+                                if (read>0){
+                                    //Toast.makeText(this, "File size"+bytes.length+" Abstract size "+read, Toast.LENGTH_SHORT).show();
+
+                                    encodedFile = Base64.encodeToString(bytes, Base64.DEFAULT);
+
+                                    Button myButton = findViewById(clickedButton);
+                                    uploadImage(perspectiveCode, myButton);
+                                }
+                                else{
+                                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(this, "File is empty", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }finally {
+                            if (fS!=null){
+                                try {
+                                    fS.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+/*
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
+                        builder.setTitle("Помилка");
+                        builder.setMessage("Підтримується версія Android від 8.0" +
+                                "Вас буде перенаправлено на сторінку авторизації");
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                PhotoActivity.this.finish();
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.setCancelable(false);
+                        android.app.AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        */
+                    }
                 }else{
-                    //Glide.with(this).load(fileUri).into(preView);
-                    postPath = mImageFileLocation;
-                    File f = new File(postPath);
-                    bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), null);
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(90);
-                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 900, 1200, false);
-//                    buttonUpload.setEnabled(true);
-//                    buttonTakePhoto.setEnabled(false);
-
-                    file = imageToString();
-                    Button myButton = findViewById(clickedButton);
-                    uploadImage(perspectiveCode, myButton);
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
+                    builder.setTitle("Помилка");
+                    builder.setMessage("Підтримується версія Android від 8.0" +
+                            "Вас буде перенаправлено на сторінку авторизації");
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(PhotoActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            PhotoActivity.this.finish();
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setCancelable(false);
+                    android.app.AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                 }
 
             }
-
+        }
+        else if (resultCode == RESULT_CANCELED) {
+            //Toast.makeText(this, "11111", Toast.LENGTH_SHORT).show();
+            Button myButton = findViewById(clickedButton);
+            myButton.setEnabled(true);
+//            buttonUpload.setEnabled(false);
+//            buttonTakePhoto.setEnabled(true);
         }
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Невиправна помилка", Toast.LENGTH_LONG).show();
@@ -245,8 +427,28 @@ public class PhotoActivity extends AppCompatActivity{
 
 
     private void captureImage() {
+        int resulution = 300;
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nf = cm.getActiveNetworkInfo();
+
+        TelephonyManager telephonyManager;
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        int nt = telephonyManager.getNetworkType();
+
+        if (nf.getType()==ConnectivityManager.TYPE_WIFI){
+            resulution = 1024;
+        }
+        else if( nt == NETWORK_TYPE_UNKNOWN | nt == NETWORK_TYPE_GPRS | nt == NETWORK_TYPE_EDGE | nt == NETWORK_TYPE_GSM ){
+            resulution = 300;
+        }
+        else {
+            resulution = 1024;
+        }
+
         if (Build.VERSION.SDK_INT > 21) { //use this if Lollipop_Mr1 (API 22) or above
             Intent callCameraApplicationIntent = new Intent();
+            callCameraApplicationIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+            callCameraApplicationIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, resulution);
             callCameraApplicationIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
 
             // We give some instruction to the intent to save the image
@@ -273,8 +475,10 @@ public class PhotoActivity extends AppCompatActivity{
             Logger.getAnonymousLogger().info("Calling the camera App by intent");
 
             // The following strings calls the camera app and wait for his file in return.
+            prDialog.showDialog();
             startActivityForResult(callCameraApplicationIntent, CAMERA_PIC_REQUEST);
         } else {
+
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
             fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
@@ -282,20 +486,21 @@ public class PhotoActivity extends AppCompatActivity{
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 
             // start the image capture Intent
+            prDialog.showDialog();
             startActivityForResult(intent, CAMERA_PIC_REQUEST);
         }
 
 
     }
     private void uploadImage(int photoPerspectiveCode, final Button currentButton){
-                prDialog.showDialog();
+                //prDialog.showDialog();
                 //final String file = imageToString();
-                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-                myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+//                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+//                myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
 
                 service = retrofit.create(GetTokenApi.class);
 
-                Call<UploadResponse> uploadResponseCall = service.uploadPhoto(myGuid, file, photoPerspectiveCode);
+                Call<UploadResponse> uploadResponseCall = service.uploadPhoto(myToken, myGuid, encodedFile, photoPerspectiveCode);
                 uploadResponseCall.enqueue(new Callback<UploadResponse>() {
                     @Override
                     public void onResponse(Call<UploadResponse> call, Response<UploadResponse> response) {
@@ -316,6 +521,7 @@ public class PhotoActivity extends AppCompatActivity{
                                         finish();
                                     }
                             }else if (response.code()==401){
+                                currentButton.setEnabled(true);
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                                 builder.setTitle("Помилка");
                                 builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
@@ -335,9 +541,10 @@ public class PhotoActivity extends AppCompatActivity{
 
                             }
                             else{
+                                currentButton.setEnabled(true);
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                                 builder.setTitle("Помилка");
-                                builder.setMessage("Помилка, зверніться до адміністратора."+response.body().getErrorMsg());
+                                builder.setMessage("MyGuid is: "+myGuid+"Помилка, зверніться до адміністратора."+" "+response.code()+" "+response.body().getErrorMsg());
                                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -352,6 +559,9 @@ public class PhotoActivity extends AppCompatActivity{
                                 alertDialog.show();
 
                             }
+                        }else{
+                            currentButton.setEnabled(true);
+                            Toast.makeText(PhotoActivity.this, "Помилка. Зменьшіть якість фото "+response.code(), Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -451,5 +661,12 @@ public class PhotoActivity extends AppCompatActivity{
                 button4.setEnabled(true);
             }
         }
+    }
+
+
+    @Override
+    public void onBackPressed()
+    {
+        finish();
     }
 }

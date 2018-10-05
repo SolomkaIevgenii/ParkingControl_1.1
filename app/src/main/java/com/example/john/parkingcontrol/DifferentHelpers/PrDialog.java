@@ -11,7 +11,7 @@ public class PrDialog {
 
         pDialog = new ProgressDialog(actContext);
         pDialog.setMessage(message);
-        pDialog.setCancelable(true);
+        pDialog.setCancelable(false);
     }
 
 

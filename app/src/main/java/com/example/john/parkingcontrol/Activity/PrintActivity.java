@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -40,10 +41,11 @@ public class PrintActivity extends AppCompatActivity {
 
     static final UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
     private BluetoothAdapter mBluetoothAdapter=null;
-    private String msg, msgResponse, myGuid, document_number, document_author, document_date,car_number;
+    private String msg, msgResponse, myGuid, document_number, document_author, document_date,car_number, myToken;
     private GetTokenApi service;
     private TextView documentNumber, documentAuthor, documentDate, carNumber;
     private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yy"+" час "+"HH:mm");
+    private SharedPreferences sPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,9 @@ public class PrintActivity extends AppCompatActivity {
         document_author = getIntent().getExtras().getString("document_author");
         document_date = getIntent().getExtras().getString("document_date");
         car_number = getIntent().getExtras().getString("car_number");
+
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
 
         msg = "останова\n" +
                 "\n" +
@@ -207,7 +212,7 @@ public class PrintActivity extends AppCompatActivity {
         receiptRequest.setGuid(myGuid);
         receiptRequest.setFormat("txt");
 
-        Call<ReceiptResponse> responseCall = service.getReceipt(receiptRequest);
+        Call<ReceiptResponse> responseCall = service.getReceipt(myToken, receiptRequest);
         responseCall.enqueue(new Callback<ReceiptResponse>() {
             @Override
             public void onResponse(Call<ReceiptResponse> call, Response<ReceiptResponse> response) {

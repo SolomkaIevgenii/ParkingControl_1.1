@@ -155,8 +155,8 @@
         android:id="@+id/buttonOK"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/button_login_pres_norm"
         android:text="ок"
         android:textColor="@color/colorWhite"
@@ -170,8 +170,8 @@
         android:id="@+id/buttonRefresh"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/button_login_pres_norm"
         android:text="Оновити"
         android:textColor="@color/colorWhite"
@@ -183,17 +183,33 @@
 
     <Button
         android:id="@+id/buttonTicketIssue"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:text="виписати повідомлення"
-        android:visibility="gone"
         android:background="@drawable/button_login_pres_norm"
+        android:text="виписати повідомлення"
         android:textColor="@color/colorWhite"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonOK"
+        app:layout_constraintStart_toEndOf="@+id/buttonGetBack" />
+
+    <Button
+        android:id="@+id/buttonGetBack"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/button_login_pres_norm"
+        android:text="Назад"
+        android:textColor="@color/colorWhite"
+        android:visibility="visible"
+        android:enabled="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonTicketIssue"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
