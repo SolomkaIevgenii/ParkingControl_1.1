@@ -101,6 +101,7 @@ public class PhotoActivity extends AppCompatActivity {
     private StringBuilder sbNet;
     private int g = 0;
     private int gpsStatus=111;
+    private int buttonStatus=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,18 +123,21 @@ public class PhotoActivity extends AppCompatActivity {
         button3 = findViewById(R.id.button4);
         button4 = findViewById(R.id.button2);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        if (buttonStatus==0)
+        {if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             button1.setEnabled(false);
             button2.setEnabled(false);
             button3.setEnabled(false);
             button4.setEnabled(false);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         } else {
+            buttonStatus=1;
             button1.setEnabled(true);
             button2.setEnabled(true);
             button3.setEnabled(true);
             button4.setEnabled(true);
         }
+    }
 
 
         String url = getString(R.string.app_main_url);
@@ -221,13 +225,12 @@ public class PhotoActivity extends AppCompatActivity {
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if (location==null){
+            if (location==null||gpsLat==null||gpsLat==0||gpsLat==0.0||gpsLon==null||gpsLon==0||gpsLon==0.0){
                 g=0;
                 return;
             }
-            else if (location!=null&&gpsLat!=null&&gpsLat!=0&&gpsLat!=0.0&&gpsLon!=null&&gpsLon!=0&&gpsLon!=0.0&&g!=1){
+            else if (location!=null&&gpsLat!=null&&gpsLat!=0&&gpsLat!=0.0&&gpsLon!=null&&gpsLon!=0&&gpsLon!=0.0&&g==0){
                 prDialog.hideDialog();
-                g=1;
                 button1.setEnabled(true);
                 button2.setEnabled(true);
                 button3.setEnabled(true);
@@ -240,7 +243,7 @@ public class PhotoActivity extends AppCompatActivity {
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
 
-            if ((provider.equals(LocationManager.GPS_PROVIDER)&&status==2)||(provider.equals(LocationManager.NETWORK_PROVIDER)&&status==2&&g!=1)){
+            if ((provider.equals(LocationManager.GPS_PROVIDER)&&status==2)||(provider.equals(LocationManager.NETWORK_PROVIDER)&&status==2&&g==0)){
                 prDialog.hideDialog();
                 g=1;
                 gpsStatus=status;
@@ -278,6 +281,7 @@ public class PhotoActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        prDialog.showDialog();
         if(resultCode==RESULT_OK){
             findViewById(R.id.buttonGetBack).setEnabled(false);
 
@@ -471,7 +475,7 @@ public class PhotoActivity extends AppCompatActivity {
 
             Logger.getAnonymousLogger().info("Calling the camera App by intent");
 
-            prDialog.showDialog();
+            //prDialog.showDialog();
             startActivityForResult(callCameraApplicationIntent, CAMERA_PIC_REQUEST);
         } else {
 
@@ -481,7 +485,7 @@ public class PhotoActivity extends AppCompatActivity {
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 
-            prDialog.showDialog();
+            //prDialog.showDialog();
             startActivityForResult(intent, CAMERA_PIC_REQUEST);
         }
 
@@ -501,18 +505,22 @@ public class PhotoActivity extends AppCompatActivity {
                         if (response.code()==200) {
                             if (response.body().getIsSuccess()) {
                                 currentButton.setBackgroundColor(Color.GREEN);
+                                currentButton.setEnabled(false);
                                 i++;
 //                                TextView textView = findViewById(R.id.textView7);
 //                                textView.setText(response.toString());
 
                                     if (i==4) {
+                                        prDialog.showDialog();
                                         getAdrGPS();
                                     }
-                            }else{
+                                    return;
+                            }
+                            else{
                                 currentButton.setEnabled(true);
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                                 builder.setTitle("Помилка");
-                                builder.setMessage("MyGuid is: "+myGuid+"Помилка, зверніться до адміністратора."+" "+response.code()+" "+response.body().getErrorMsg());
+                                builder.setMessage("Помилка, зверніться до адміністратора."+" "+response.code()+" "+response.body().getErrorMsg());
                                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -548,11 +556,9 @@ public class PhotoActivity extends AppCompatActivity {
                             android.app.AlertDialog alertDialog = builder.create();
                             alertDialog.show();
 
-                        }
-
-                        else{
+                        }else {
                             currentButton.setEnabled(true);
-                            Toast.makeText(PhotoActivity.this, "Помилка. Зменьшіть якість фото "+response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(PhotoActivity.this, "Помилка. Зменьшіть якість фото " + response.code(), Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -587,6 +593,7 @@ public class PhotoActivity extends AppCompatActivity {
         addressResponseCall.enqueue(new Callback<AddressResponse>() {
             @Override
             public void onResponse(Call<AddressResponse> call, Response<AddressResponse> response) {
+                prDialog.hideDialog();
                 if (response.code()==200){
                     try{
 
@@ -612,6 +619,7 @@ public class PhotoActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<AddressResponse> call, Throwable t) {
+                prDialog.hideDialog();
                 String responseAddress = "";
             }
         });
