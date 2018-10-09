@@ -5,13 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,9 +20,7 @@ import android.widget.Toast;
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenRequest;
 import com.example.john.parkingcontrol.API.models.GetToken.TokenResponse;
-import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
 import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
-import com.example.john.parkingcontrol.DifferentHelpers.TemporaryDataStorage;
 import com.example.john.parkingcontrol.R;
 
 import retrofit2.Call;
@@ -42,12 +34,10 @@ public class LoginActivity extends AppCompatActivity {
     private GetTokenApi service;
     @NonNull
     private String myToken, myName;
-    private TemporaryDataStorage temporaryDataStorage = new TemporaryDataStorage();
     private SharedPreferences sPrefToken;
     private TextWatcher textWatcher;
     private EditText enteredLogin;
     private EditText enteredPassword;
-    private ProgressDialog pDialog;
     private BluetoothAdapter mBluetoothAdapter=null;
 
 
@@ -229,24 +219,6 @@ public class LoginActivity extends AppCompatActivity {
         else { Toast.makeText(this, "Натисніть повторно для ВИХОДУ", Toast.LENGTH_LONG).show(); }
 
         mBackPressed = System.currentTimeMillis();
-    }
-
-    protected void initDialog() {
-
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Завантаження...");
-        pDialog.setCancelable(true);
-    }
-
-
-    protected void showDialog() {
-
-        if (!pDialog.isShowing()) pDialog.show();
-    }
-
-    protected void hideDialog() {
-
-        if (pDialog.isShowing()) pDialog.dismiss();
     }
 
 }

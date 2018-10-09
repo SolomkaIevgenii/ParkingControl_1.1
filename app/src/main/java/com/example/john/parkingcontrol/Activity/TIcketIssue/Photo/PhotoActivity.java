@@ -38,10 +38,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
+import com.example.john.parkingcontrol.API.models.AddCarInc.AddressByGPS.AddressRequest;
+import com.example.john.parkingcontrol.API.models.AddCarInc.AddressByGPS.AddressResponse;
 import com.example.john.parkingcontrol.API.models.AddCarInc.UploadResponse;
 import com.example.john.parkingcontrol.Activity.LoginActivity;
 import com.example.john.parkingcontrol.Activity.MainActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
+import com.example.john.parkingcontrol.Activity.TIcketIssue.ProtokolActivity;
 import com.example.john.parkingcontrol.BuildConfig;
 import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
 import com.example.john.parkingcontrol.R;
@@ -82,7 +85,7 @@ public class PhotoActivity extends AppCompatActivity {
     private Boolean isEmptyNumber;
     private Retrofit retrofit;
     private Bitmap bitmap;
-    private GetTokenApi service;
+    private GetTokenApi service, service2;
     private SharedPreferences sPref;
     private Uri fileUri;
     private static final String TAG = PhotoActivity.class.getSimpleName();
@@ -219,9 +222,10 @@ public class PhotoActivity extends AppCompatActivity {
         @Override
         public void onLocationChanged(Location location) {
             if (location==null){
+                g=0;
                 return;
             }
-            else if (location!=null&&gpsLat!=null&&gpsLat!=0&&gpsLat!=0.0&&gpsLon!=null&&gpsLon!=0&&gpsLon!=0.0){
+            else if (location!=null&&gpsLat!=null&&gpsLat!=0&&gpsLat!=0.0&&gpsLon!=null&&gpsLon!=0&&gpsLon!=0.0&&g!=1){
                 prDialog.hideDialog();
                 g=1;
                 button1.setEnabled(true);
@@ -236,7 +240,7 @@ public class PhotoActivity extends AppCompatActivity {
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
 
-            if ((provider.equals(LocationManager.GPS_PROVIDER)&&status==2)||(provider.equals(LocationManager.NETWORK_PROVIDER)&&status==2)){
+            if ((provider.equals(LocationManager.GPS_PROVIDER)&&status==2)||(provider.equals(LocationManager.NETWORK_PROVIDER)&&status==2&&g!=1)){
                 prDialog.hideDialog();
                 g=1;
                 gpsStatus=status;
@@ -502,15 +506,7 @@ public class PhotoActivity extends AppCompatActivity {
 //                                textView.setText(response.toString());
 
                                     if (i==4) {
-                                        locationManager.removeUpdates(locationListener);
-                                        Intent intent = new Intent(PhotoActivity.this, FillTicketActivity.class);
-                                        intent.putExtra("guid", myGuid);
-                                        intent.putExtra("isEmptyNumber", isEmptyNumber);
-                                        intent.putExtra("responseCarNumber", responseCarNumber);
-                                        intent.putExtra("gpsLat", gpsLat);
-                                        intent.putExtra("gpsLon", gpsLon);
-                                        startActivity(intent);
-                                        finish();
+                                        getAdrGPS();
                                     }
                             }else{
                                 currentButton.setEnabled(true);
@@ -567,6 +563,58 @@ public class PhotoActivity extends AppCompatActivity {
                         currentButton.setEnabled(true);
                     }
                 });
+    }
+
+    private void getAdrGPS(){
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
+
+        String url = getString(R.string.app_main_url);
+        final Retrofit retrofit2 = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        service2 = retrofit2.create(GetTokenApi.class);
+        AddressRequest addressRequest = new AddressRequest();
+
+        addressRequest.setLatitude(gpsLat);
+        addressRequest.setLongitude(gpsLon);
+
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        myToken = "Bearer "+sPref.getString(getResources().getString(R.string.sp_field_token), "");
+
+        final Call<AddressResponse> addressResponseCall = service2.getAddress(myToken, addressRequest);
+        addressResponseCall.enqueue(new Callback<AddressResponse>() {
+            @Override
+            public void onResponse(Call<AddressResponse> call, Response<AddressResponse> response) {
+                if (response.code()==200){
+                    try{
+
+                        locationManager.removeUpdates(locationListener);
+                        Intent intent = new Intent(PhotoActivity.this, ProtokolActivity.class);
+                        intent.putExtra("guid", myGuid);
+                        intent.putExtra("isEmptyNumber", isEmptyNumber);
+                        intent.putExtra("responseCarNumber", responseCarNumber);
+                        intent.putExtra("gpsLat", gpsLat);
+                        intent.putExtra("gpsLon", gpsLon);
+                        intent.putExtra("responseAddress", response.body().getAddress());
+                        startActivity(intent);
+                        finish();
+                    }
+                    catch (NullPointerException e){
+                        String responseAddress = "";
+                    }
+                }
+                else {
+                    String responseAddress = "";
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddressResponse> call, Throwable t) {
+                String responseAddress = "";
+            }
+        });
     }
 
     public Uri getOutputMediaFileUri(int type) {

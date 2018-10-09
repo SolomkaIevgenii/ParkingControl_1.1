@@ -4,6 +4,8 @@ import android.content.Intent;
 
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncRequest;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncResponse;
+import com.example.john.parkingcontrol.API.models.AddCarInc.AddressByGPS.AddressRequest;
+import com.example.john.parkingcontrol.API.models.AddCarInc.AddressByGPS.AddressResponse;
 import com.example.john.parkingcontrol.API.models.AddCarInc.Receipt.ReceiptRequest;
 import com.example.john.parkingcontrol.API.models.AddCarInc.Receipt.ReceiptResponse;
 import com.example.john.parkingcontrol.API.models.AddCarInc.UploadResponse;
@@ -61,5 +63,9 @@ public interface GetTokenApi {
     @FormUrlEncoded
     @POST("api/incident_upload_file")
     Call<UploadResponse> uploadPhoto(@Header("Authorization") String token, @Field("Guid") String guid, @Field("Base64StringContent") String file, @Field("PhotoPerspectiveCode")int photoPerspectiveCode);
+
+    //Получение адреса по координатам
+    @POST("api/address_by_gps")
+    Call<AddressResponse> getAddress(@Header("Authorization") String token, @Body AddressRequest addressRequest);
 
 }

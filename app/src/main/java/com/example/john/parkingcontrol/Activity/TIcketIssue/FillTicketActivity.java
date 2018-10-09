@@ -9,14 +9,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.john.parkingcontrol.API.interfaces.GetTokenApi;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncRequest;
 import com.example.john.parkingcontrol.API.models.AddCarInc.AddCarIncResponse;
 import com.example.john.parkingcontrol.Activity.LoginActivity;
+import com.example.john.parkingcontrol.Activity.MainActivity;
 import com.example.john.parkingcontrol.Activity.PrintActivity;
-import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
+import com.example.john.parkingcontrol.DifferentHelpers.GetApiData;
+import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
 import com.example.john.parkingcontrol.R;
 
 import java.text.DateFormat;
@@ -34,10 +35,12 @@ public class FillTicketActivity extends AppCompatActivity {
     private String myGuid;
     private SharedPreferences sPref;
     private String myToken;
-    private String responseCarNumber;
+    private String responseCarNumber, responseAddress;
     private EditText driverName, description, address, driverContact, finalCarNumber;
     private Double gpsLon, gpsLat;
     private Boolean isEmptyNumber;
+    private PrDialog prDialog = new PrDialog();
+    private int lawNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,14 @@ public class FillTicketActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fill_ticket);
         Button button = findViewById(R.id.buttonSetIssue);
 
-        gpsLon = getIntent().getExtras().getDouble("gpsLon");;
-        gpsLat = getIntent().getExtras().getDouble("gpsLat");;
+        responseAddress = getIntent().getExtras().getString("responseAddress");
+        gpsLon = getIntent().getExtras().getDouble("gpsLon");
+        gpsLat = getIntent().getExtras().getDouble("gpsLat");
         myGuid = getIntent().getExtras().getString("guid");
+        lawNumber = getIntent().getExtras().getInt("lawNumber");
+        address = findViewById(R.id.editAddress);
+        address.setText(responseAddress);
+
         isEmptyNumber = getIntent().getExtras().getBoolean("isEmptyNumber");
         finalCarNumber = findViewById(R.id.editCarNumberInc);
 
@@ -72,12 +80,7 @@ public class FillTicketActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-
-        //sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
-        //myGuid = sPref.getString(getResources().getString(R.string.sp_field_guid), "");
-
         @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-        //final String currentDate = dateFormat.format(Calendar.getInstance().getTime());
 
         service = retrofit.create(GetTokenApi.class);
 
@@ -89,7 +92,7 @@ public class FillTicketActivity extends AppCompatActivity {
                 driverName = findViewById(R.id.editDriverName);
                 driverContact = findViewById(R.id.editDriverContacts);
                 description = findViewById(R.id.editDescription);
-                address = findViewById(R.id.editAddress);
+
 
                 AddCarIncRequest addCarIncRequest = new AddCarIncRequest();
 
@@ -101,7 +104,7 @@ public class FillTicketActivity extends AppCompatActivity {
                 addCarIncRequest.setIncidentAddress(address.getText().toString());
                 addCarIncRequest.setGpsLong(gpsLon);
                 addCarIncRequest.setGpsLat(gpsLat);
-                addCarIncRequest.setLawEnactmentId(1);
+                addCarIncRequest.setLawEnactmentId(lawNumber);
                 addCarIncRequest.setDocumentTypeId(1);
 
                 final Call<AddCarIncResponse> responseCall = service.addNewIncident(myToken, addCarIncRequest);
@@ -120,34 +123,15 @@ public class FillTicketActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                                 v.setEnabled(true);
-                            }else if (response.code()==401){
-                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(FillTicketActivity.this);
-                                builder.setTitle("Помилка");
-                                builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
-                                        "Вас буде перенаправлено на сторінку авторизації");
-                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(FillTicketActivity.this, LoginActivity.class);
-                                        startActivity(intent);
-                                        FillTicketActivity.this.finish();
-                                        dialog.dismiss();
-                                    }
-                                });
-                                builder.setCancelable(false);
-                                android.app.AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
-                                v.setEnabled(true);
-
                             }
                             else{
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(FillTicketActivity.this);
                                 builder.setTitle("Помилка");
-                                builder.setMessage("Помилка ана сервері, зверніться до адміністратора");
+                                builder.setMessage("Помилка створення інцеденту");
                                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(FillTicketActivity.this, LoginActivity.class);
+                                        Intent intent = new Intent(FillTicketActivity.this, MainActivity.class);
                                         startActivity(intent);
                                         FillTicketActivity.this.finish();
                                         dialog.dismiss();
@@ -158,6 +142,45 @@ public class FillTicketActivity extends AppCompatActivity {
                                 alertDialog.show();
                                 v.setEnabled(true);
                             }
+                        }
+                        else if (response.code()==401){
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(FillTicketActivity.this);
+                            builder.setTitle("Помилка");
+                            builder.setMessage("Помилка авторизації, бездіяльність більше 20 хв." +
+                                    "Вас буде перенаправлено на сторінку авторизації");
+                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(FillTicketActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    FillTicketActivity.this.finish();
+                                    dialog.dismiss();
+                                }
+                            });
+                            builder.setCancelable(false);
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                            v.setEnabled(true);
+                        }
+
+                        else{
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(FillTicketActivity.this);
+                            builder.setTitle("Помилка");
+                            builder.setMessage("Помилка на сервері." +
+                                    "Зверніться до адміністратора.");
+                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(FillTicketActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    FillTicketActivity.this.finish();
+                                    dialog.dismiss();
+                                }
+                            });
+                            builder.setCancelable(false);
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                            v.setEnabled(true);
                         }
 
 
@@ -172,5 +195,14 @@ public class FillTicketActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    private String sendAdrRequest(){
+        String url = getString(R.string.app_main_url);
+        gpsLon = getIntent().getExtras().getDouble("gpsLon");
+        gpsLat = getIntent().getExtras().getDouble("gpsLat");
+        GetApiData getAddress = new GetApiData();
+        return getAddress.getTheAddress(gpsLat, gpsLon, myToken, url, this);
     }
 }

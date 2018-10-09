@@ -19,23 +19,45 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.LoginActivity">
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.MainActivity" />
-        <activity android:name=".Activity.ParkingListActivity" />
-        <activity android:name=".Activity.CheckCar.CheckPaymentActivity" />
-        <activity android:name=".Activity.CheckCar.EnterNumberActivity" />
-        <activity android:name=".Activity.CheckCar.ScanQRActivity" />
-        <activity android:name=".Activity.CheckCar.CheckingResultActivity" />
-        <activity android:name=".Activity.HistoryList.HistoryActivity" />
-        <activity android:name=".Activity.TIcketIssue.FillTicketActivity" />
-        <activity android:name=".Activity.PrintActivity" />
-        <activity android:name=".Activity.TIcketIssue.Photo.PhotoActivity" />
+        <activity
+            android:name=".Activity.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.ParkingListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.CheckCar.CheckPaymentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.CheckCar.EnterNumberActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.CheckCar.ScanQRActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.CheckCar.CheckingResultActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.HistoryList.HistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.TIcketIssue.FillTicketActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.PrintActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.TIcketIssue.Photo.PhotoActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -47,7 +69,10 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".Activity.TIcketIssue.ProtokolActivity"></activity>
+        <activity android:name=".Activity.TIcketIssue.ProtokolActivity"
+                  android:screenOrientation="portrait"  />
+        <activity android:name=".Activity.TIcketIssue.DetailsProtokolActivity"
+                  android:screenOrientation="portrait" ></activity>
     </application>
 
 </manifest>
