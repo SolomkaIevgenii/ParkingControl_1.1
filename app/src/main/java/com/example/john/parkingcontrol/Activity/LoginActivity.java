@@ -14,6 +14,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,18 +34,57 @@ public class LoginActivity extends AppCompatActivity {
 
     private GetTokenApi service;
     @NonNull
-    private String myToken, myName;
-    private SharedPreferences sPrefToken;
+    private String myToken, myName, myLogin, myPas;
+    private SharedPreferences sPrefToken, sPref;
     private TextWatcher textWatcher;
     private EditText enteredLogin;
     private EditText enteredPassword;
     private BluetoothAdapter mBluetoothAdapter=null;
+    private Switch isSaveOn;
+    private Boolean isChecked;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Boolean isFirstRun = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE).
+                getBoolean("isfirstrun", true);
+        if (isFirstRun) {
+            sPrefToken = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+            SharedPreferences.Editor ed4 = sPrefToken.edit();
+            ed4.putBoolean("isCheck", false);
+            ed4.commit();
+
+            getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE).edit().putBoolean("isfirstrun", false).commit();
+        }
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        enteredLogin = findViewById(R.id.editTextLogin);
+        enteredPassword = findViewById(R.id.editTextPassword);
+
+        isSaveOn = findViewById(R.id.switchSavePassword);
+
+        sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+        isChecked = sPref.getBoolean("isCheck", false);
+
+        isSaveOn.setChecked(isChecked);
+
+        if (isSaveOn.isChecked()){
+            sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+            myLogin = sPref.getString("myLogin", "");
+            enteredLogin.setText(myLogin);
+
+            sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+            myPas = sPref.getString("myPas", "");
+            enteredPassword.setText(myPas);
+        }
+
+
 //        initDialog();
         final PrDialog prDialog = new PrDialog();
         prDialog.initDialog(getString(R.string.app_text_loading), this);
@@ -58,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
 
         final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-        enteredLogin = findViewById(R.id.editTextLogin);
 
         if (enteredLogin.getText().toString().length()>3){
             findViewById(R.id.buttonEnter).setEnabled(true);
@@ -81,12 +120,13 @@ public class LoginActivity extends AppCompatActivity {
 
         final TextView loginEntered = findViewById(R.id.editTextLogin);
         final TextView passwordEntered = findViewById(R.id.editTextPassword);
-        enteredLogin = findViewById(R.id.editTextLogin);
-        enteredPassword = findViewById(R.id.editTextPassword);
 
         textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if (loginEntered.getText().toString().length()>=3&&passwordEntered.getText().toString().length()>=3){
+                    findViewById(R.id.buttonEnter).setEnabled(true);
+                }
             }
 
             @Override
@@ -144,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
                 //String superLogin = loginEntered.getText().toString();
                 //String superPassword = passwordEntered.getText().toString();
 
-                 /**
+                /**
                  * Ниже вызов класа для формирования запроса
                  */
 
@@ -174,6 +214,28 @@ public class LoginActivity extends AppCompatActivity {
                                 SharedPreferences.Editor edl = sPrefToken.edit();
                                 edl.putString(getResources().getString(R.string.sp_field_user), myName);
                                 edl.commit();
+
+                                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                                SharedPreferences.Editor ed2 = sPrefToken.edit();
+                                ed2.putString("myLogin", enteredLogin.getText().toString());
+                                ed2.commit();
+
+                                sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                                SharedPreferences.Editor ed3 = sPrefToken.edit();
+                                ed3.putString("myPas", enteredPassword.getText().toString());
+                                ed3.commit();
+
+                                if (isSaveOn.isChecked()){
+                                    sPrefToken = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                                    SharedPreferences.Editor ed4 = sPrefToken.edit();
+                                    ed4.putBoolean("isCheck", true);
+                                    ed4.commit();
+                                }else if (!isSaveOn.isChecked()){
+                                    sPrefToken = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
+                                    SharedPreferences.Editor ed4 = sPrefToken.edit();
+                                    ed4.putBoolean("isCheck", false);
+                                    ed4.commit();
+                                }
 
 
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);

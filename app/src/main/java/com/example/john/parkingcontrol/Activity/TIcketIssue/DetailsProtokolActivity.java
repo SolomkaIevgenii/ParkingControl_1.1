@@ -340,22 +340,21 @@ public class DetailsProtokolActivity extends AppCompatActivity {
 
         }else{
             Toast.makeText(this, "Помилка", Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(DetailsProtokolActivity.this, ProtokolActivity.class);
-            intent.putExtra("guid", myGuid);
-            intent.putExtra("isEmptyNumber", isEmptyNumber);
-            intent.putExtra("responseCarNumber", responseCarNumber);
-            intent.putExtra("gpsLat", gpsLat);
-            intent.putExtra("gpsLon", gpsLon);
-            intent.putExtra("responseAddress", responseAddress);
-            startActivity(intent);
-            finish();
+            onBackPressed();
         }
 
         buttonPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                Intent intent = new Intent(DetailsProtokolActivity.this, ProtokolActivity.class);
+                intent.putExtra("guid", myGuid);
+                intent.putExtra("isEmptyNumber", isEmptyNumber);
+                intent.putExtra("responseCarNumber", responseCarNumber);
+                intent.putExtra("gpsLat", gpsLat);
+                intent.putExtra("gpsLon", gpsLon);
+                intent.putExtra("responseAddress", responseAddress);
+                startActivity(intent);
+                finish();
             }
         });
         buttonNext.setOnClickListener(new View.OnClickListener() {
@@ -413,7 +412,7 @@ public class DetailsProtokolActivity extends AppCompatActivity {
                     buttonNext.setEnabled(true);
 
                     if (prNumber==1){
-                        lawNumber=1;
+                        lawNumber=2;
                     }else if (prNumber==2){
                         lawNumber=2;
                     }
@@ -437,7 +436,7 @@ public class DetailsProtokolActivity extends AppCompatActivity {
 
                     buttonNext.setEnabled(true);
 
-                    lawNumber = prNumber;
+                    lawNumber=3;
 
 
                     Intent intent = new Intent(DetailsProtokolActivity.this, FillTicketActivity.class);
@@ -459,7 +458,7 @@ public class DetailsProtokolActivity extends AppCompatActivity {
 
                     buttonNext.setEnabled(true);
 
-                    lawNumber = prNumber;
+                    lawNumber=4;
 
 
                     Intent intent = new Intent(DetailsProtokolActivity.this, FillTicketActivity.class);
@@ -503,7 +502,7 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox2.isChecked()){
+                if (checkBox1.isChecked()){
                     buttonNext.setEnabled(true);
                 }else{
                     buttonNext.setEnabled(false);
@@ -514,7 +513,7 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox3.isChecked()){
+                if (checkBox1.isChecked()){
                     buttonNext.setEnabled(true);
                 }else{
                     buttonNext.setEnabled(false);
@@ -525,7 +524,7 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox4.isChecked()){
+                if (checkBox1.isChecked()){
                     buttonNext.setEnabled(true);
                 }else{
                     buttonNext.setEnabled(false);
@@ -536,7 +535,7 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox5.isChecked()){
+                if (checkBox1.isChecked()){
                     buttonNext.setEnabled(true);
                 }else{
                     buttonNext.setEnabled(false);
@@ -547,7 +546,7 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox6.isChecked()){
+                if (checkBox1.isChecked()){
                     buttonNext.setEnabled(true);
                 }else{
                     buttonNext.setEnabled(false);
@@ -555,6 +554,9 @@ public class DetailsProtokolActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void newOnBackPressed(String myGuid1, Boolean isEmptyNumber1, String responseCarNumber1, Double gpsLat1, Double gpsLon1, String responseAddress1){
     }
 
 

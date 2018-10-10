@@ -93,12 +93,12 @@ public class PhotoActivity extends AppCompatActivity {
     public static final int IMG_REQUEST = 777;
     private static final int CAMERA_PIC_REQUEST = 1111;
     private PrDialog prDialog = new PrDialog();
-    int i = 0;
     private int perspectiveCode = 0;
     private int clickedButton;
     private LocationManager locationManager;
     private StringBuilder sbGPS;
     private StringBuilder sbNet;
+    int i = 0;
     private int g = 0;
     private int gpsStatus=111;
     private int buttonStatus=0;
@@ -123,21 +123,16 @@ public class PhotoActivity extends AppCompatActivity {
         button3 = findViewById(R.id.button4);
         button4 = findViewById(R.id.button2);
 
-        if (buttonStatus==0)
-        {if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            button1.setEnabled(false);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
-            button4.setEnabled(false);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            prDialog.showDialog();
+            buttonStatus=0;
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-        } else {
+        } else if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED&&buttonStatus==0){
+            prDialog.hideDialog();
             buttonStatus=1;
-            button1.setEnabled(true);
-            button2.setEnabled(true);
-            button3.setEnabled(true);
-            button4.setEnabled(true);
         }
-    }
+
 
 
         String url = getString(R.string.app_main_url);
@@ -149,6 +144,7 @@ public class PhotoActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                prDialog.showDialog();
                 v.setEnabled(false);
                 captureImage();
                 perspectiveCode = 1;
@@ -158,6 +154,7 @@ public class PhotoActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                prDialog.showDialog();
                 v.setEnabled(false);
                 captureImage();
                 perspectiveCode = 2;
@@ -167,6 +164,7 @@ public class PhotoActivity extends AppCompatActivity {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                prDialog.showDialog();
                 v.setEnabled(false);
                 captureImage();
                 perspectiveCode = 3;
@@ -176,6 +174,7 @@ public class PhotoActivity extends AppCompatActivity {
         button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                prDialog.showDialog();
                 v.setEnabled(false);
                 captureImage();
                 perspectiveCode = 4;
@@ -186,7 +185,6 @@ public class PhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-                finish();
             }
         });
     }
@@ -194,15 +192,15 @@ public class PhotoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (g==0||gpsStatus==111){
-            prDialog.showDialog();
-            button1.setEnabled(false);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
-            button4.setEnabled(false);
-        }
 
-        startLocation();
+        prDialog.showDialog();
+        if (g==0||gpsStatus==111){
+            startLocation();
+//            button1.setEnabled(false);
+//            button2.setEnabled(false);
+//            button3.setEnabled(false);
+//            button4.setEnabled(false);
+        }
     }
     private void startLocation(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -225,32 +223,34 @@ public class PhotoActivity extends AppCompatActivity {
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if (location==null||gpsLat==null||gpsLat==0||gpsLat==0.0||gpsLon==null||gpsLon==0||gpsLon==0.0){
-                g=0;
+            Double latitude = location.getLatitude();
+            Double longitude = location.getLatitude();
+            if (location==null){
                 return;
             }
-            else if (location!=null&&gpsLat!=null&&gpsLat!=0&&gpsLat!=0.0&&gpsLon!=null&&gpsLon!=0&&gpsLon!=0.0&&g==0){
+            else if (location!=null&&latitude!=null&&latitude!=0&&latitude!=0.0&&longitude!=null&&longitude!=0&&longitude!=0.0&&g==0){
+                g=1;
                 prDialog.hideDialog();
-                button1.setEnabled(true);
-                button2.setEnabled(true);
-                button3.setEnabled(true);
-                button4.setEnabled(true);
+//                button1.setEnabled(true);
+//                button2.setEnabled(true);
+//                button3.setEnabled(true);
+//                button4.setEnabled(true);
+                gpsLat = location.getLatitude();
+                gpsLon = location.getLongitude();
             }
-            gpsLat = location.getLatitude();
-            gpsLon = location.getLongitude();
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
 
-            if ((provider.equals(LocationManager.GPS_PROVIDER)&&status==2)||(provider.equals(LocationManager.NETWORK_PROVIDER)&&status==2&&g==0)){
+            if ((provider.equals(LocationManager.GPS_PROVIDER)&&status==2)||(provider.equals(LocationManager.NETWORK_PROVIDER)&&status==2&&(g==0||g==1))){
                 prDialog.hideDialog();
-                g=1;
+                g=2;
                 gpsStatus=status;
-                button1.setEnabled(true);
-                button2.setEnabled(true);
-                button3.setEnabled(true);
-                button4.setEnabled(true);
+//                button1.setEnabled(true);
+//                button2.setEnabled(true);
+//                button3.setEnabled(true);
+//                button4.setEnabled(true);
             }
 
         }
@@ -388,6 +388,7 @@ public class PhotoActivity extends AppCompatActivity {
                         */
                     }
                 }else{
+                    prDialog.hideDialog();
                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                     builder.setTitle("Помилка");
                     builder.setMessage("Підтримується версія Android від 8.0" +
@@ -409,11 +410,13 @@ public class PhotoActivity extends AppCompatActivity {
             }
         }
         else if (resultCode == RESULT_CANCELED) {
+            prDialog.hideDialog();
             Button myButton = findViewById(clickedButton);
             myButton.setEnabled(true);
 
         }
         else if (resultCode != RESULT_CANCELED) {
+            prDialog.hideDialog();
             Toast.makeText(this, "Невиправна помилка", Toast.LENGTH_LONG).show();
 
         }
@@ -514,9 +517,9 @@ public class PhotoActivity extends AppCompatActivity {
                                         prDialog.showDialog();
                                         getAdrGPS();
                                     }
-                                    return;
                             }
                             else{
+                                prDialog.hideDialog();
                                 currentButton.setEnabled(true);
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                                 builder.setTitle("Помилка");
@@ -537,6 +540,7 @@ public class PhotoActivity extends AppCompatActivity {
 
                             }
                         }else if (response.code()==401){
+                            prDialog.hideDialog();
                             currentButton.setEnabled(true);
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
                             builder.setTitle("Помилка");
@@ -557,6 +561,7 @@ public class PhotoActivity extends AppCompatActivity {
                             alertDialog.show();
 
                         }else {
+                            prDialog.hideDialog();
                             currentButton.setEnabled(true);
                             Toast.makeText(PhotoActivity.this, "Помилка. Зменьшіть якість фото " + response.code(), Toast.LENGTH_LONG).show();
                         }
@@ -610,17 +615,58 @@ public class PhotoActivity extends AppCompatActivity {
                     }
                     catch (NullPointerException e){
                         String responseAddress = "";
+                        Toast.makeText(PhotoActivity.this, "Адресу не визначено", Toast.LENGTH_SHORT).show();
+
+                        locationManager.removeUpdates(locationListener);
+                        Intent intent = new Intent(PhotoActivity.this, ProtokolActivity.class);
+                        intent.putExtra("guid", myGuid);
+                        intent.putExtra("isEmptyNumber", isEmptyNumber);
+                        intent.putExtra("responseCarNumber", responseCarNumber);
+                        intent.putExtra("gpsLat", gpsLat);
+                        intent.putExtra("gpsLon", gpsLon);
+                        intent.putExtra("responseAddress", responseAddress);
+                        startActivity(intent);
+                        finish();
                     }
                 }
                 else {
                     String responseAddress = "";
+                    Toast.makeText(PhotoActivity.this, "Адресу не визначено", Toast.LENGTH_SHORT).show();
+
+                    locationManager.removeUpdates(locationListener);
+                    Intent intent = new Intent(PhotoActivity.this, ProtokolActivity.class);
+                    intent.putExtra("guid", myGuid);
+                    intent.putExtra("isEmptyNumber", isEmptyNumber);
+                    intent.putExtra("responseCarNumber", responseCarNumber);
+                    intent.putExtra("gpsLat", gpsLat);
+                    intent.putExtra("gpsLon", gpsLon);
+                    intent.putExtra("responseAddress", responseAddress);
+                    startActivity(intent);
+                    finish();
                 }
             }
 
             @Override
             public void onFailure(Call<AddressResponse> call, Throwable t) {
                 prDialog.hideDialog();
-                String responseAddress = "";
+
+                prDialog.hideDialog();
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PhotoActivity.this);
+                builder.setTitle("Помилка");
+                builder.setMessage("Помилка зв'язку, перевірте інтернет з'єднання");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        locationManager.removeUpdates(locationListener);
+                        Intent intent = new Intent(PhotoActivity.this, PhotoActivity.class);
+                        startActivity(intent);
+                        PhotoActivity.this.finish();
+                        dialog.dismiss();
+                    }
+                });
+                builder.setCancelable(false);
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
     }
@@ -719,6 +765,9 @@ public class PhotoActivity extends AppCompatActivity {
     public void onBackPressed()
     {
         locationManager.removeUpdates(locationListener);
+        Intent intent = new Intent(PhotoActivity.this, MainActivity.class);
+        startActivity(intent);
+        PhotoActivity.this.finish();
         finish();
     }
 }

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(v.getContext(), EnterNumberActivity.class);
                 startActivity(intent);
                 v.setEnabled(true);
+                finish();
             }
         });
 
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("isEmptyNumber", true);
                             startActivity(intent);
                             v.setEnabled(true);
+                            finish();
             }
         });
 
@@ -154,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
         {
             super.onBackPressed();
+            finish();
             return;
         }
         else { Toast.makeText(getBaseContext(), getString(R.string.app_text_to_exit), Toast.LENGTH_SHORT).show(); }

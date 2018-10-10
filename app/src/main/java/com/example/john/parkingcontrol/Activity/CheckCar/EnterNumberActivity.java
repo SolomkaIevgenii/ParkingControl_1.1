@@ -9,6 +9,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
+import com.example.john.parkingcontrol.Activity.MainActivity;
+import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
 import com.example.john.parkingcontrol.R;
 
 public class EnterNumberActivity extends AppCompatActivity {
@@ -67,8 +69,14 @@ public class EnterNumberActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-                finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(EnterNumberActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
