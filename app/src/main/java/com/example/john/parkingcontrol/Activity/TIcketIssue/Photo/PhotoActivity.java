@@ -237,6 +237,8 @@ public class PhotoActivity extends AppCompatActivity {
 //                button4.setEnabled(true);
                 gpsLat = location.getLatitude();
                 gpsLon = location.getLongitude();
+//                gpsLat = 50.505699;
+//                gpsLon = 30.460661;
             }
         }
 

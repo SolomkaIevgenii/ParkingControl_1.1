@@ -19,6 +19,7 @@ import com.example.john.parkingcontrol.Activity.CheckCar.CheckingResultActivity;
 import com.example.john.parkingcontrol.Activity.PrinterDrivers.AbstractPrinter;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.FillTicketActivity;
 import com.example.john.parkingcontrol.Activity.TIcketIssue.Photo.PhotoActivity;
+import com.example.john.parkingcontrol.DifferentHelpers.PrDialog;
 import com.example.john.parkingcontrol.R;
 import com.google.gson.annotations.Expose;
 
@@ -46,11 +47,28 @@ public class PrintActivity extends AppCompatActivity {
     private TextView documentNumber, documentAuthor, documentDate, carNumber;
     private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yy"+" час "+"HH:mm");
     private SharedPreferences sPref;
+    private PrDialog prDialog = new PrDialog();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getReceiptText();
+        prDialog.initDialog(getString(R.string.app_text_loading), this);
+        prDialog.showDialog();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print);
+
+        String url = getString(R.string.app_main_url);
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        service = retrofit.create(GetTokenApi.class);
+
         myGuid = getIntent().getExtras().getString("guid");
         document_number = getIntent().getExtras().getString("document_number");
         document_author = getIntent().getExtras().getString("document_author");
@@ -60,14 +78,16 @@ public class PrintActivity extends AppCompatActivity {
         sPref = getSharedPreferences(getResources().getString(R.string.sp_folder_name), MODE_PRIVATE);
         myToken = sPref.getString(getResources().getString(R.string.sp_field_token), "");
 
-        msg = "останова\n" +
-                "\n" +
-                "дата:\t"+"\n" +
-                "время:\t18:30\n" +
-                "Чек:\t13245679879\n" +
-                "серия:\tФФ1325ББ\n" +
-                "\n" +
-                "сумма:\t8.00грн.\n\n\n\n\n\n\n\n\n";
+        //msg=msgResponse;
+
+//        msg = "останова\n" +
+//                "\n" +
+//                "дата:\t"+"\n" +
+//                "время:\t18:30\n" +
+//                "Чек:\t13245679879\n" +
+//                "серия:\tФФ1325ББ\n" +
+//                "\n" +
+//                "сумма:\t8.00грн.\n\n\n\n\n\n\n\n\n";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date dStart = null;
@@ -87,15 +107,6 @@ public class PrintActivity extends AppCompatActivity {
         documentAuthor.setText(document_author);
         documentNumber.setText(document_number);
         carNumber.setText(car_number);
-
-        String url = getString(R.string.app_main_url);
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        service = retrofit.create(GetTokenApi.class);
-
-        msg=getReceiptText();
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -135,7 +146,7 @@ public class PrintActivity extends AppCompatActivity {
         BluetoothSocket mmSocket=null;
         OutputStream mmOutputStream=null;
         AbstractPrinter dev = null;
-        msg = getReceiptText();
+//        msg = getReceiptText();
 //        String currentDate = dateFormat.format(Calendar.getInstance().getTime());
 //        msg = "Билет на автобус\n" +
 //                "\n" +
@@ -207,7 +218,7 @@ public class PrintActivity extends AppCompatActivity {
 
         return res;
     }
-    private String getReceiptText(){
+    private void getReceiptText(){
         ReceiptRequest receiptRequest = new ReceiptRequest();
         receiptRequest.setGuid(myGuid);
         receiptRequest.setFormat("txt");
@@ -216,15 +227,31 @@ public class PrintActivity extends AppCompatActivity {
         responseCall.enqueue(new Callback<ReceiptResponse>() {
             @Override
             public void onResponse(Call<ReceiptResponse> call, Response<ReceiptResponse> response) {
-                //msgResponse=response.body().getText();
+                prDialog.hideDialog();
+                if(response.code()==200) {
+                    try {
+                        msg = response.body().getText();
+                    }catch (NullPointerException e){
+                        msg="Чек не завантажено\n" +
+                                "\n" +
+                                "Звернітьсядо адміністратора\n";
+                        Toast.makeText(PrintActivity.this, msg, Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    msg="Завантажено пустий чек\n" +
+                            "\n" +
+                            "Звернітьсядо адміністратора\n";
+                    Toast.makeText(PrintActivity.this, msg, Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public void onFailure(Call<ReceiptResponse> call, Throwable t) {
+                prDialog.hideDialog();
                 Toast.makeText(PrintActivity.this, " "+t, Toast.LENGTH_SHORT).show();
-                msgResponse="Error";
+                msg="Error";
             }
         });
-        return msgResponse;
+        //return msgResponse;
     }
 }

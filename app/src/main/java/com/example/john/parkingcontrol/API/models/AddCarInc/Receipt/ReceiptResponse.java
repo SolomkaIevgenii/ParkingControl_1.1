@@ -4,19 +4,19 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ReceiptResponse {
-    @SerializedName("Guid")
+    @SerializedName("guid")
     @Expose
-    private String Guid;
+    private String guid;
 
-    @SerializedName("Text")
+    @SerializedName("text")
     @Expose
-    private String Text;
+    private String text;
 
     public String getGuid() {
-        return Guid;
+        return guid;
     }
 
     public String getText() {
-        return Text;
+        return text;
     }
 }

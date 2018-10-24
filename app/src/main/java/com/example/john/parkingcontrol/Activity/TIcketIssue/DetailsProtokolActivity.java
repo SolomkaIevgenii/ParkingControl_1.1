@@ -493,6 +493,11 @@ public class DetailsProtokolActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkBox1.isChecked()){
                     buttonNext.setEnabled(true);
+                    checkBox2.setChecked(false);
+                    checkBox3.setChecked(false);
+                    checkBox4.setChecked(false);
+                    checkBox5.setChecked(false);
+                    checkBox6.setChecked(false);
                 }else{
                     buttonNext.setEnabled(false);
                 }
@@ -502,8 +507,13 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox1.isChecked()){
+                if (checkBox2.isChecked()){
                     buttonNext.setEnabled(true);
+                    checkBox1.setChecked(false);
+                    checkBox3.setChecked(false);
+                    checkBox4.setChecked(false);
+                    checkBox5.setChecked(false);
+                    checkBox6.setChecked(false);
                 }else{
                     buttonNext.setEnabled(false);
                 }
@@ -513,8 +523,13 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox1.isChecked()){
+                if (checkBox3.isChecked()){
                     buttonNext.setEnabled(true);
+                    checkBox1.setChecked(false);
+                    checkBox2.setChecked(false);
+                    checkBox4.setChecked(false);
+                    checkBox5.setChecked(false);
+                    checkBox6.setChecked(false);
                 }else{
                     buttonNext.setEnabled(false);
                 }
@@ -524,8 +539,13 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox1.isChecked()){
+                if (checkBox4.isChecked()){
                     buttonNext.setEnabled(true);
+                    checkBox1.setChecked(false);
+                    checkBox2.setChecked(false);
+                    checkBox3.setChecked(false);
+                    checkBox5.setChecked(false);
+                    checkBox6.setChecked(false);
                 }else{
                     buttonNext.setEnabled(false);
                 }
@@ -535,8 +555,13 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox1.isChecked()){
+                if (checkBox5.isChecked()){
                     buttonNext.setEnabled(true);
+                    checkBox1.setChecked(false);
+                    checkBox2.setChecked(false);
+                    checkBox3.setChecked(false);
+                    checkBox4.setChecked(false);
+                    checkBox6.setChecked(false);
                 }else{
                     buttonNext.setEnabled(false);
                 }
@@ -546,8 +571,13 @@ public class DetailsProtokolActivity extends AppCompatActivity {
         checkBox6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox1.isChecked()){
+                if (checkBox6.isChecked()){
                     buttonNext.setEnabled(true);
+                    checkBox1.setChecked(false);
+                    checkBox2.setChecked(false);
+                    checkBox3.setChecked(false);
+                    checkBox4.setChecked(false);
+                    checkBox5.setChecked(false);
                 }else{
                     buttonNext.setEnabled(false);
                 }
